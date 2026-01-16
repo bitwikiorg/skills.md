@@ -50,8 +50,6 @@ jobs:
     needs: schema
     steps:
       - uses: actions/checkout@v4
-      - name: Install SPDX checker
-        run: pip install spdx-license-checker
       - name: Run Validator
         run: python scripts/spdx-validator.py
 
