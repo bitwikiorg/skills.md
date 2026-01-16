@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install linters
-        run: npm install -g eslint prettier
+        run: npm install -g eslint prettier @eslint/js globals
       - name: ESLint
         run: eslint sources/**/*.js --max-warnings=0
       - name: Prettier
