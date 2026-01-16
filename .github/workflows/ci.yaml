@@ -1,5 +1,4 @@
-name: CI
-
+name: Quality Gates
 on:
   push:
     branches: [ main ]
@@ -7,28 +6,76 @@ on:
     branches: [ main ]
 
 jobs:
-  quality-gate:
+  hash:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        task: [hash, schema, spdx, index, lint]
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
-        
-    - name: Install Dependencies
-      run: npm install
-      
-    - name: Run Quality Gate
-      run: |
-        case "{{ matrix.task }}" in
-          hash) echo "Running Hash Check..." ;;
-          schema) echo "Running Schema Validation..." ;;
-          spdx) echo "Running SPDX Check..." ;;
-          index) echo "Running Index Generation..." ;;
-          lint) ./scripts/lint.sh ;;
-        esac
+      - uses: actions/checkout@v3
+      - name: Verify SHA-256 of code bodies
+        run: |
+          for f in sources/**/*.js; do
+            ./scripts/hash-verifier.sh "$f"
+          done
+
+  gpg:
+    runs-on: ubuntu-latest
+    needs: hash
+    steps:
+      - uses: actions/checkout@v3
+      - name: Import public key
+        run: gpg --import public-key.asc
+      - name: Verify signatures
+        run: |
+          for f in sources/**/*.js; do
+            # front-matter
+            yaml=$(awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "$f")
+            # code body
+            code=$(awk '/^---$/{c++;next} c==1' "$f")
+            # extract the clearsigned block after the “signature:” key
+            sig=$(echo "$yaml" | awk '/^signature:/ {flag=1; next} flag && !/^---$/')
+            echo "$code" | gpg --verify <(echo "$sig")
+          done
+
+  schema:
+    runs-on: ubuntu-latest
+    needs: gpg
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install AJV
+        run: npm install -g ajv-cli
+      - name: Validate front-matter against schema
+        run: |
+          for f in sources/**/*.js; do
+            yaml=$(awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "$f")
+            echo "$yaml" | ajv validate -s schemas/skill.schema.json -d -
+          done
+
+  spdx:
+    runs-on: ubuntu-latest
+    needs: schema
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install SPDX checker
+        run: pip install spdx-license-checker
+      - name: Run SPDX validator
+        run: python scripts/spdx-validator.py
+
+  index:
+    runs-on: ubuntu-latest
+    needs: spdx
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build /swarm/index.json
+        run: go run ./scripts/swarm-indexer.go
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: index
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install linters
+        run: |
+          npm install -g eslint prettier
+      - name: ESLint (zero warnings)
+        run: eslint sources/**/*.js --max-warnings=0
+      - name: Prettier check
+        run: prettier --check sources/**/*.js
