@@ -79,3 +79,22 @@ jobs:
         run: eslint sources/**/*.js --max-warnings=0
       - name: Prettier check
         run: prettier --check sources/**/*.js
+
+ embed:
+  runs-on: ubuntu-latest
+  needs: index
+  steps:
+  - uses: actions/checkout@v3
+  - name: Set up Python
+    uses: actions/setup-python@v4
+    with:
+      python-version: '3.10'
+  - name: Install dependencies
+    run: pip install fastembed
+  - name: Generate Embeddings
+    run: python scripts/skill-embedder.py
+  - name: Upload Artifact
+    uses: actions/upload-artifact@v3
+    with:
+      name: embeddings
+      path: swarm/embeddings.json
