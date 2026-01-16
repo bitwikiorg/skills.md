@@ -37,13 +37,13 @@ jobs:
     needs: gpg
     steps:
       - uses: actions/checkout@v4
-      - name: Install AJV
-        run: npm install -g ajv-cli
+      - name: Install dependencies
+        run: npm install
       - name: Validate Schema
         run: |
           for f in sources/**/*.js; do
             awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "$f" > frontmatter.yaml
-            ajv validate -s schemas/skill.schema.json -d frontmatter.yaml
+            npx ajv validate -s schemas/skill.schema.json -d frontmatter.yaml
           done
   spdx:
     runs-on: ubuntu-latest
@@ -66,12 +66,12 @@ jobs:
     needs: index
     steps:
       - uses: actions/checkout@v4
-      - name: Install linters
-        run: npm install -g eslint prettier @eslint/js globals
+      - name: Install dependencies
+        run: npm install
       - name: ESLint
-        run: eslint sources/**/*.js --max-warnings=0
+        run: npx eslint sources/**/*.js --max-warnings=0
       - name: Prettier
-        run: prettier --check sources/**/*.js
+        run: npx prettier --check sources/**/*.js
 
   embed:
     runs-on: ubuntu-latest
