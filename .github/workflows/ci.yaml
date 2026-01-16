@@ -19,7 +19,7 @@ jobs:
         run: |
           chmod +x scripts/hash-verifier.sh
           for f in sources/**/*.js; do
-            ./scripts/hash-verifier.sh "f"
+            ./scripts/hash-verifier.sh "$f"
           done
 
   gpg:
@@ -42,7 +42,7 @@ jobs:
       - name: Validate Schema
         run: |
           for f in sources/**/*.js; do
-            awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "f" > frontmatter.yaml
+            awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "$f" > frontmatter.yaml
             ajv validate -s schemas/skill.schema.json -d frontmatter.yaml
           done
   spdx:
@@ -97,7 +97,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: {{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: [lint, embed]
     if: github.ref == 'refs/heads/main'
