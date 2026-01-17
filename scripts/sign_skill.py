@@ -7,7 +7,9 @@ def sign_skill(path):
     with open(path, 'r') as f:
         content = f.read()
 
-    # EXACT MATCH of verifier logic
+    # NORMALIZE LINE ENDINGS
+    content = content.replace('\r\n', '\n')
+
     parts = content.split('\n---\n')
     if len(parts) < 2:
         print(f"Error: Invalid format in {path}")
@@ -16,8 +18,6 @@ def sign_skill(path):
     front = parts[0]
     code = parts[1]
 
-    # Sign the code content
-    # We pipe 'code' to gpg, exactly as the verifier pipes it
     proc = subprocess.run(
         ['gpg', '--batch', '--yes', '--armor', '--detach-sign'],
         input=code.encode('utf-8'),
@@ -29,19 +29,10 @@ def sign_skill(path):
         sys.exit(1)
 
     sig = proc.stdout.decode('utf-8')
-
-    # Indent signature for YAML block scalar
     indented_sig = ''.join([' ' + line + '\n' for line in sig.splitlines()])
 
-    # Remove existing signature from frontmatter
-    # We look for 'signature: |' and remove it and following indented lines
     front = re.sub(r'signature: \|\n( .*\n)*', '', front)
-    
-    # Append new signature
     new_front = front.strip() + '\n' + 'signature: |\n' + indented_sig
-
-    # Reconstruct file
-    # Note: split consumed the delimiter, so we put it back
     new_content = new_front + '\n---\n' + code
 
     with open(path, 'w') as f:

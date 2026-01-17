@@ -7,31 +7,28 @@ def verify(path):
     with open(path, 'r') as f:
         content = f.read()
     
+    # NORMALIZE LINE ENDINGS
+    content = content.replace('\r\n', '\n')
+    
     parts = content.split('\n---\n')
-    if len(parts) < 2: 
+    if len(parts) < 2:
         print(f"Skipping {path}: Invalid format")
         return False
     
     front = parts[0]
     code = parts[1]
     
-    # Robust extraction: Find the PGP block directly
-    # This ignores YAML indentation, pipes, etc.
     match = re.search(r'(-----BEGIN PGP SIGNATURE-----[\s\S]*?-----END PGP SIGNATURE-----)', front)
-    if not match: 
+    if not match:
         print(f"No signature block found in {path}")
         return False
     
     raw_sig = match.group(1)
-    
-    # Clean indentation: Remove leading spaces from each line
     clean_sig = '\n'.join([line.strip() for line in raw_sig.splitlines()])
     
-    # Write sig to temp file
     with open('temp.sig', 'w') as f: f.write(clean_sig)
     
-    # Verify
-    proc = subprocess.run(['gpg', '--verify', 'temp.sig', '-'], input=code.encode(), capture_output=True)
+    proc = subprocess.run(['gpg', '--verify', 'temp.sig', '-'], input=code.encode('utf-8'), capture_output=True)
     
     if proc.returncode != 0:
         print(f"Failed {path}: {proc.stderr.decode()}")
