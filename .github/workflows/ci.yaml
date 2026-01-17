@@ -1,135 +1,135 @@
 name: Quality Gates
 on:
- push:
- branches: [ main ]
- pull_request:
- branches: [ main ]
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 permissions:
- contents: write
- pages: write
- id-token: write
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
- hash:
- runs-on: ubuntu-latest
- steps:
- - uses: actions/checkout@v4
- - name: Verify SHA-256
- run: |
- chmod +x scripts/hash-verifier.sh
- for f in sources/**/*.js; do
- ./scripts/hash-verifier.sh "$f"
- done
+  hash:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify SHA-256
+        run: |
+          chmod +x scripts/hash-verifier.sh
+          for f in sources/**/*.js; do
+            ./scripts/hash-verifier.sh "$f"
+          done
 
- gpg:
- runs-on: ubuntu-latest
- needs: hash
- steps:
- - uses: actions/checkout@v4
- - name: Import public key
- run: gpg --import public-key.asc
- - name: Verify signatures
- run: python3 scripts/gpg-verifier.py
+  gpg:
+    runs-on: ubuntu-latest
+    needs: hash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import public key
+        run: gpg --import public-key.asc
+      - name: Verify signatures
+        run: python3 scripts/gpg-verifier.py
 
- schema:
- runs-on: ubuntu-latest
- needs: gpg
- steps:
- - uses: actions/checkout@v4
- - name: Install AJV
- run: npm install -g ajv-cli
- - name: Validate Schema
- run: |
- for f in sources/**/*.js; do
- awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "$f" > frontmatter.yaml
- ajv validate -s schemas/skill.schema.json -d frontmatter.yaml
- done
+  schema:
+    runs-on: ubuntu-latest
+    needs: gpg
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install AJV
+        run: npm install -g ajv-cli
+      - name: Validate Schema
+        run: |
+          for f in sources/**/*.js; do
+            awk '/^---$/{if(++c==2)exit} {if(c==1)print}' "$f" > frontmatter.yaml
+            ajv validate -s schemas/skill.schema.json -d frontmatter.yaml
+          done
 
- spdx:
- runs-on: ubuntu-latest
- needs: schema
- steps:
- - uses: actions/checkout@v4
- - name: Run Validator
- run: python scripts/spdx-validator.py
+  spdx:
+    runs-on: ubuntu-latest
+    needs: schema
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Validator
+        run: python scripts/spdx-validator.py
 
- index:
- runs-on: ubuntu-latest
- needs: spdx
- steps:
- - uses: actions/checkout@v4
- - name: Build Index
- run: go run ./scripts/swarm-indexer.go
- - name: Upload Index Artifact
- uses: actions/upload-artifact@v4
- with:
- name: swarm-index
- path: swarm/
+  index:
+    runs-on: ubuntu-latest
+    needs: spdx
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Index
+        run: go run ./scripts/swarm-indexer.go
+      - name: Upload Index Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: swarm-index
+          path: swarm/
 
- lint:
- runs-on: ubuntu-latest
- needs: index
- steps:
- - uses: actions/checkout@v4
- - name: Install dependencies
- run: npm ci
- - name: ESLint
- run: npx eslint sources/**/*.js --max-warnings=0
- - name: Prettier
- run: npx prettier --check sources/**/*.js
+  lint:
+    runs-on: ubuntu-latest
+    needs: index
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: ESLint
+        run: npx eslint sources/**/*.js --max-warnings=0
+      - name: Prettier
+        run: npx prettier --check sources/**/*.js
 
- embed:
- runs-on: ubuntu-latest
- needs: index
- steps:
- - uses: actions/checkout@v4
- - name: Set up Python
- uses: actions/setup-python@v4
- with:
- python-version: '3.10'
- - name: Install dependencies
- run: pip install fastembed
- - name: Generate Embeddings
- run: python scripts/skill-embedder.py
- - name: Upload Embeddings Artifact
- uses: actions/upload-artifact@v4
- with:
- name: embeddings
- path: swarm/embeddings.json
+  embed:
+    runs-on: ubuntu-latest
+    needs: index
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install fastembed
+      - name: Generate Embeddings
+        run: python scripts/skill-embedder.py
+      - name: Upload Embeddings Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: embeddings
+          path: swarm/embeddings.json
 
- deploy:
- environment:
- name: github-pages
- url: ${{ steps.deployment.outputs.page_url }}
- runs-on: ubuntu-latest
- needs: [lint, embed]
- if: github.ref == 'refs/heads/main'
- steps:
- - uses: actions/checkout@v4
- 
- # Download Artifacts into site/swarm/
- - name: Download Index
- uses: actions/download-artifact@v4
- with:
- name: swarm-index
- path: site/swarm
- 
- - name: Download Embeddings
- uses: actions/download-artifact@v4
- with:
- name: embeddings
- path: site/swarm
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: [lint, embed]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Download Artifacts into site/swarm/
+      - name: Download Index
+        uses: actions/download-artifact@v4
+        with:
+          name: swarm-index
+          path: site/swarm
+      
+      - name: Download Embeddings
+        uses: actions/download-artifact@v4
+        with:
+          name: embeddings
+          path: site/swarm
 
- - name: Setup Pages
- uses: actions/configure-pages@v4
- - name: Build with Jekyll
- uses: actions/jekyll-build-pages@v1
- with:
- source: ./site
- destination: ./_site
- - name: Upload artifact
- uses: actions/upload-pages-artifact@v3
- - name: Deploy to GitHub Pages
- id: deployment
- uses: actions/deploy-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./site
+          destination: ./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
