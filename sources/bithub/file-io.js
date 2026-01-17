@@ -1,28 +1,26 @@
 ---
 id: bithub.file-io
 spdx-id: Apache-2.0
-origin: https://github.com/bitcoreos/skills.md
-hash: sha256:9d9b978e86e950d544397e6d712a756e4ec236d870489fb41d70e1a6fc8a17dd
+origin: https://github.com/bitwikiorg/skills.md
 version: 1.0.0
 signature: |
-  -----BEGIN PGP SIGNATURE-----
-  
-  iQIzBAABCgAdFiEEZ8U4LAM6MxGSR9xCicnEBsaHU18FAmlpmMQACgkQicnEBsaH
-  U18rlA//QxPgxVXLBiqvbebH7eyCdkTcSk0NLTWaYZbhjtIqzTL8x1pdTS/bypLD
-  WkRybznv0dYkmI1Ots0v23J9jLh1t+/XM5c8mGniU4FMbIQl72OVyOHQ1Pxqzd9Q
-  /acoc1JQzZRtMcSU9xAgnOJZTTVP0DwhIajd9qpE7jBg+5B77Tjr8XqIitr5EwXQ
-  qzCl4vrdEtpMo0ke8IF+o6qj9JVGRHQeS2n8MU7FZS6GxoTfSUfBpKsNnHVn6CvQ
-  LSKXjKctmEj0O5kRcG8XQJI1i/2VKEsBKErID+L/CUvgYdHGTL2jlwzevHUEsx46
-  yNFwluF8mnaXW9y1XqhuXt/VvFxMafxiH4wC6Llvr+R3M1X8Lwo1Qe/GozZGcdsF
-  VaaupGrIrNnEJ5QUKs26u3g9pLP2Ox91UmVhh8OYXVxsbMQ2UFzPBKWEdKANqZnO
-  TfZ4qCa6+WEKYen6kcHnj1tG44JzPIRQlGpDAvHzMYUUtYbby5XhRrfoSIkFlm9U
-  LNGqm+Mb8d+sb0DjbudcfLputSNW1GorxIL/QeSnik+rOr78bDYzy2tRV2GUhOp7
-  d/ygyYWSnD671Jio2+GBeQVKpOIkHJzA2bMi17L5ID+jLo2Dplv3V/otqrIBV6wQ
-  oprPVBP58aALNl2NKeWvjog1lSS1/9RUnvPDjL95o5BBSM2Guos=
-  =ND+S
-  -----END PGP SIGNATURE-----
+    -----BEGIN PGP SIGNATURE-----
+    
+    iQIzBAABCgAdFiEEZ8U4LAM6MxGSR9xCicnEBsaHU18FAmlrArkACgkQicnEBsaH
+    U1+SMBAAk5IxqFMYIESYVOf0N7ZNGIIZVQ8Nc9F6UbVDjBaROEFBbQPf/CXLBlr4
+    UOcUONX8sUpqGphrOIxx5GxMhWnBZjblpwVmlgzOkpzxJxvpVfUYM+fLdjOeeXxj
+    sSykYAQpzGNZv+6+5qfJ6tCYIegPzXYl6ObleHAOD/rTYhjjjH1CanbrpitW50RX
+    IgR3PMC3LVcPb1Whx6em6/tUbMUtrglovDfIF29IFOfSDOq4yLkDl0+ScZrcGxki
+    IqRyv9ouukR05ba8kq9d+5SuXuqIZZiQcf38+qdBu8jGg9lO9CzQgLmGy1VUVulW
+    YgxAaM4yQmhmzGY+K5vf3J9Rr9DwSJriO8yVE8XVeMoo37O7AuMayWNUNKkF5vaT
+    WxAaPmt6vQJONjl9XkpS2FUoMMKTnihxPAdHZLi/uUCrU2liCaKE9Li6r55PEzGT
+    qRnDYWDv0FmFbHo74RQ4UnIWfRHXvHIyu1UF0hk2Y/Mbo8MmNF0GNChDtXV+Oq/x
+    Y2eMYvdc0BcXom1rt18bF7W9ocUmCSqk1iRIaV3uVMIOZlkZs7G0k08h31gXl+6Y
+    28ya2yW2u1sk6aH3lJd1bHcGbht5OMcTH+ElrjaxEsLDY53VZhmaODmeWLminReM
+    E1YJ40Lqy71cgm7lpfVCiq6sfcHFXfkeFR/LAvS74Vmgeh/fjqw=
+    =NaYk
+    -----END PGP SIGNATURE-----
+
 ---
-/* global Deno */
-export async function readFile(path) {
-  return Deno.readTextFile(path);
-}
+// Read file asynchronously
+export async function readFile(path) { return Deno.readTextFile(path); }
