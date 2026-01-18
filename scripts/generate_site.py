@@ -4,7 +4,7 @@ import json
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCES_DIR = os.path.join(REPO_ROOT, 'sources')
-OUTPUT_FILE = os.path.join(REPO_ROOT, 'site', 'index.html')
+OUTPUT_FILE = os.path.join(REPO_ROOT, 'index.html')
 GITHUB_BASE_URL = "https://github.com/bitcoreos/skills.md/blob/main/"
 
 def parse_skill_file(filepath):
