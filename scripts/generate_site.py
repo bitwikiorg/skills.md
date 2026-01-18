@@ -1,263 +1,256 @@
 import os
-import yaml
-import json
+import re
 
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SOURCES_DIR = os.path.join(REPO_ROOT, 'sources')
-OUTPUT_FILE = os.path.join(REPO_ROOT, 'index.html')
-GITHUB_BASE_URL = "https://github.com/bitcoreos/skills.md/blob/main/"
+# Configuration
+REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SKILLS_FILE = os.path.join(REPO_DIR, 'skills.md')
+OUTPUT_FILE = os.path.join(REPO_DIR, 'index.html')
 
-def parse_skill_file(filepath):
-    try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        if not content.startswith('---'):
-            return None
-            
-        parts = content.split('---', 2)
-        if len(parts) < 3:
-            return None
-            
-        frontmatter = yaml.safe_load(parts[1])
-        if not isinstance(frontmatter, dict):
-            return None
-            
-        # Add relative path for linking
-        rel_path = os.path.relpath(filepath, REPO_ROOT)
-        frontmatter['file_path'] = rel_path
-        return frontmatter
-    except Exception as e:
-        print(f"Error parsing {filepath}: {e}")
-        return None
-
-def scan_skills():
-    skills = []
-    for root, dirs, files in os.walk(SOURCES_DIR):
-        for file in files:
-            if file == 'SKILL.md':
-                filepath = os.path.join(root, file)
-                skill_data = parse_skill_file(filepath)
-                if skill_data:
-                    skills.append(skill_data)
-    return skills
-
-def generate_html(skills):
-    # Sort skills by name
-    skills.sort(key=lambda x: x.get('name', 'Untitled'))
-    
-    html_template = """
-<!DOCTYPE html>
+HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BITcore Skill Index</title>
+    <title>BitcoreOS Skills Registry</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #38bdf8;
-            --border: #334155;
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-green: #238636;
+            --accent-blue: #58a6ff;
+            --border-color: #30363d;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0;
-            padding: 2rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             line-height: 1.5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            padding: 2rem;
         }
         header {
-            margin-bottom: 2rem;
-            text-align: center;
+            max_width: 1200px;
+            margin: 0 auto 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(to right, var(--accent), #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        #search {
-            width: 100%;
-            max-width: 600px;
-            padding: 1rem;
-            font-size: 1.1rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border);
-            background-color: var(--card-bg);
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
             color: var(--text-main);
-            margin-bottom: 2rem;
         }
-        #search:focus {
-            outline: 2px solid var(--accent);
-            border-color: transparent;
+        .search-container { flex-grow: 1; max-width: 400px; }
+        #search-input {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+        }
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .skill-card {
+        .card {
             background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             padding: 1.5rem;
-            transition: transform 0.2s, border-color 0.2s;
             display: flex;
             flex-direction: column;
+            transition: transform 0.2s, border-color 0.2s;
         }
-        .skill-card:hover {
+        .card:hover {
+            border-color: var(--accent-blue);
             transform: translateY(-2px);
-            border-color: var(--accent);
         }
-        .skill-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 0 0 0.5rem 0;
-            color: var(--accent);
-        }
-        .skill-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            flex-grow: 1;
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 1rem;
         }
-        .skill-meta {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: auto;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
+        .skill-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            font-family: var(--font-mono);
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s, background-color 0.2s;
+        }
+        .copy-btn:hover {
+            color: var(--text-main);
+            background-color: var(--border-color);
+        }
+        .card-body {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+        .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            font-size: 0.85rem;
         }
-        a.source-link {
-            color: var(--accent);
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background-color: rgba(56, 139, 253, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid rgba(56, 139, 253, 0.4);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+        .source-link {
+            color: var(--text-muted);
             text-decoration: none;
-            font-weight: 500;
+            transition: color 0.2s;
         }
-        a.source-link:hover {
+        .source-link:hover {
+            color: var(--accent-blue);
             text-decoration: underline;
         }
-        .hidden {
-            display: none;
+        .hidden { display: none !important; }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-green);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            font-family: var(--font-mono);
         }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>BITcore Skill Index</h1>
-            <input type="text" id="search" placeholder="Search skills by name or description...">
-            <div id="count" style="color: var(--text-muted);"></div>
-        </header>
-        <div id="skill-grid" class="grid">
-            <!-- Skills will be injected here -->
-            {% for skill in skills %}
-            <div class="skill-card" data-name="{{ skill.get('name', '') | lower }}" data-desc="{{ skill.get('description', '') | lower }}">
-                <h2 class="skill-name">{{ skill.get('name', 'Untitled') }}</h2>
-                <p class="skill-desc">{{ skill.get('description', 'No description provided.') }}</p>
-                <div class="skill-meta">
-                    <span>v{{ skill.get('version', '1.0.0') }}</span>
-                    <a href="{{ github_base }}{{ skill.get('file_path', '') }}" target="_blank" class="source-link">View Source &rarr;</a>
-                </div>
-            </div>
-            {% endfor %}
+    <header>
+        <h1>BitcoreOS // Skills Registry</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Filter skills by name or description..." autofocus>
         </div>
-    </div>
-
+    </header>
+    <main class="grid" id="skills-grid">
+        __SKILLS_CONTENT__
+    </main>
+    <div id="toast" class="toast">Copied to clipboard!</div>
     <script>
-        const searchInput = document.getElementById('search');
-        const cards = document.querySelectorAll('.skill-card');
-        const countDisplay = document.getElementById('count');
-
-        function updateCount() {
-            const visible = document.querySelectorAll('.skill-card:not(.hidden)').length;
-            countDisplay.textContent = `Showing ${visible} skills`;
-        }
-
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            cards.forEach(card => {
-                const name = card.getAttribute('data-name');
-                const desc = card.getAttribute('data-desc');
-                if (name.includes(term) || desc.includes(term)) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('search-input');
+            const cards = document.querySelectorAll('.card');
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                cards.forEach(card => {
+                    const title = card.dataset.title.toLowerCase();
+                    const desc = card.dataset.desc.toLowerCase();
+                    if (title.includes(term) || desc.includes(term)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
             });
-            updateCount();
         });
-        
-        // Init count
-        updateCount();
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => { showToast(); });
+        }
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        }
     </script>
 </body>
-</html>
-    """
-    
-    # Simple template rendering
-    rendered = html_template.replace('{{ github_base }}', GITHUB_BASE_URL)
-    
-    # We need to construct the loop content manually since we don't have jinja2
-    cards_html = []
-    for skill in skills:
-        name = skill.get('name', 'Untitled')
-        desc = skill.get('description', 'No description provided.')
-        version = skill.get('version', '1.0.0')
-        file_path = skill.get('file_path', '')
-        
-        # Escape HTML special chars roughly
-        name_safe = str(name).replace('<', '&lt;').replace('>', '&gt;')
-        desc_safe = str(desc).replace('<', '&lt;').replace('>', '&gt;')
-        
-        card = f"""
-            <div class="skill-card" data-name="{name_safe.lower()}" data-desc="{desc_safe.lower()}">
-                <h2 class="skill-name">{name_safe}</h2>
-                <p class="skill-desc">{desc_safe}</p>
-                <div class="skill-meta">
-                    <span>v{version}</span>
-                    <a href="{GITHUB_BASE_URL}{file_path}" target="_blank" class="source-link">View Source &rarr;</a>
-                </div>
-            </div>"""
-        cards_html.append(card)
-    
-    # Replace the jinja-like block with actual content
-    start_marker = "{% for skill in skills %}"
-    end_marker = "{% endfor %}"
-    
-    start_idx = rendered.find(start_marker)
-    end_idx = rendered.find(end_marker) + len(end_marker)
-    
-    if start_idx != -1 and end_idx != -1:
-        final_html = rendered[:start_idx] + "\n".join(cards_html) + rendered[end_idx:]
-    else:
-        final_html = rendered
-    
-    return final_html
+</html>"""
 
-def main():
-    print("Scanning for skills...")
-    skills = scan_skills()
-    print(f"Found {len(skills)} skills.")
-    
-    print("Generating HTML...")
-    html_content = generate_html(skills)
-    
-    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        f.write(html_content)
-    print(f"Site generated at {OUTPUT_FILE}")
+def parse_skills(file_path):
+    skills = []
+    if not os.path.exists(file_path):
+        return skills
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    # Split by H2 headers
+    sections = re.split(r'^##\s+', content, flags=re.MULTILINE)
+    for section in sections:
+        if not section.strip(): continue
+        lines = section.strip().splitlines()
+        title = lines[0].strip()
+        body_lines = []
+        provider = "Unknown"
+        for line in lines[1:]:
+            if line.strip().startswith('- Provider:') or line.strip().startswith('* Provider:'):
+                provider = line.split(':', 1)[1].strip()
+            else:
+                body_lines.append(line)
+        description = '\n'.join(body_lines).strip() or "No description provided."
+        skills.append({'title': title, 'description': description, 'provider': provider})
+    return skills
+
+def generate_html(skills):
+    skills_html = ""
+    for skill in skills:
+        safe_title = skill['title'].replace('"', '&quot;')
+        safe_desc = skill['description'].replace('"', '&quot;')
+        card = f"""
+        <article class="card" data-title="{safe_title}" data-desc="{safe_desc}">
+            <div class="card-header">
+                <div class="skill-title">{skill['title']}</div>
+                <button class="copy-btn" onclick="copyToClipboard('{safe_title}')" title="Copy Skill Name">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+            </div>
+            <div class="card-body">{skill['description']}</div>
+            <div class="card-footer">
+                <span class="badge">{skill['provider']}</span>
+                <a href="skills.md" class="source-link">View Source</a>
+            </div>
+        </article>
+        """
+        skills_html += card
+    return HTML_TEMPLATE.replace('__SKILLS_CONTENT__', skills_html)
 
 if __name__ == "__main__":
-    main()
+    skills = parse_skills(SKILLS_FILE)
+    html = generate_html(skills)
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        f.write(html)
