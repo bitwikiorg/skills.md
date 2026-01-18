@@ -1,34 +1,2795 @@
----
-layout: default
-title: Registry Index
----
-<h1>Skill Registry</h1>
-<p>Live index of swarm capabilities.</p>
-<input type="text" id="search" placeholder="Search skills..." onkeyup="filter()" style="width: 100%; padding: 10px; margin-bottom: 20px;">
-<table id="skillTable" style="width:100%">
-<thead><tr><th>ID</th><th>Provider</th><th>Description</th><th>Links</th></tr></thead>
-<tbody></tbody>
-</table>
-<script>
-fetch('./swarm/index.json')
-.then(r => r.json())
-.then(data => {
-const tbody = document.querySelector('#skillTable tbody');
-data.forEach(skill => {
-const tr = document.createElement('tr');
-tr.innerHTML = 
-<td><code>{skill.id}</code></td>
-<td>{skill.provider}</td>
-<td>{skill.path}</td>
-<td><a href="https://github.com/bitcoreos/skills.md/blob/main/{skill.path}">View Source</a></td>
-;
-tbody.appendChild(tr);
-});
-});
-function filter() {
-const q = document.getElementById('search').value.toLowerCase();
-document.querySelectorAll('#skillTable tbody tr').forEach(tr => {
-tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
-});
-}
-</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BITcore Skill Index</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: #334155;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--accent), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #search {
+            width: 100%;
+            max-width: 600px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            margin-bottom: 2rem;
+        }
+        #search:focus {
+            outline: 2px solid var(--accent);
+            border-color: transparent;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .skill-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .skill-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        .skill-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: var(--accent);
+        }
+        .skill-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            flex-grow: 1;
+            margin-bottom: 1rem;
+        }
+        .skill-meta {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        a.source-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a.source-link:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BITcore Skill Index</h1>
+            <input type="text" id="search" placeholder="Search skills by name or description...">
+            <div id="count" style="color: var(--text-muted);"></div>
+        </header>
+        <div id="skill-grid" class="grid">
+            <!-- Skills will be injected here -->
+            
+            <div class="skill-card" data-name="3p_updates" data-desc="imported skill 3p_updates from anthropic">
+                <h2 class="skill-name">3p_updates</h2>
+                <p class="skill-desc">Imported skill 3p_updates from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/3p_updates/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="__init__" data-desc="imported skill __init__ from agentskills">
+                <h2 class="skill-name">__init__</h2>
+                <p class="skill-desc">Imported skill __init__ from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/__init__/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="__init__" data-desc="imported skill __init__ from langchain">
+                <h2 class="skill-name">__init__</h2>
+                <p class="skill-desc">Imported skill __init__ from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/__init__/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="__init__" data-desc="imported skill __init__ from anthropic">
+                <h2 class="skill-name">__init__</h2>
+                <p class="skill-desc">Imported skill __init__ from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/__init__/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="__main__" data-desc="imported skill __main__ from langchain">
+                <h2 class="skill-name">__main__</h2>
+                <p class="skill-desc">Imported skill __main__ from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/__main__/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="_sections" data-desc="imported skill _sections from vercel">
+                <h2 class="skill-name">_sections</h2>
+                <p class="skill-desc">Imported skill _sections from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/_sections/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="_template" data-desc="imported skill _template from vercel">
+                <h2 class="skill-name">_template</h2>
+                <p class="skill-desc">Imported skill _template from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="_utils" data-desc="imported skill _utils from langchain">
+                <h2 class="skill-name">_utils</h2>
+                <p class="skill-desc">Imported skill _utils from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/_utils/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="_version" data-desc="imported skill _version from langchain">
+                <h2 class="skill-name">_version</h2>
+                <p class="skill-desc">Imported skill _version from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/_version/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="advanced_event_handler_refs" data-desc="imported skill advanced_event_handler_refs from vercel">
+                <h2 class="skill-name">advanced_event_handler_refs</h2>
+                <p class="skill-desc">Imported skill advanced_event_handler_refs from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/advanced_event_handler_refs/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="advanced_search" data-desc="imported skill advanced_search from openai">
+                <h2 class="skill-name">advanced_search</h2>
+                <p class="skill-desc">Imported skill advanced_search from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/advanced_search/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="agent" data-desc="imported skill agent from langchain">
+                <h2 class="skill-name">agent</h2>
+                <p class="skill-desc">Imported skill agent from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/agent/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="agent_skills_spec" data-desc="imported skill agent_skills_spec from anthropic">
+                <h2 class="skill-name">agent_skills_spec</h2>
+                <p class="skill-desc">Imported skill agent_skills_spec from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/agent_skills_spec/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="agents" data-desc="imported skill agents from langchain">
+                <h2 class="skill-name">agents</h2>
+                <p class="skill-desc">Imported skill agents from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/agents/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="agents" data-desc="imported skill agents from vercel">
+                <h2 class="skill-name">agents</h2>
+                <p class="skill-desc">Imported skill agents from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/agents/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="analyze" data-desc="imported skill analyze from langchain">
+                <h2 class="skill-name">analyze</h2>
+                <p class="skill-desc">Imported skill analyze from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/analyze/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="api_feature" data-desc="imported skill api_feature from openai">
+                <h2 class="skill-name">api_feature</h2>
+                <p class="skill-desc">Imported skill api_feature from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/api_feature/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="app" data-desc="imported skill app from langchain">
+                <h2 class="skill-name">app</h2>
+                <p class="skill-desc">Imported skill app from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/app/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="approval" data-desc="imported skill approval from langchain">
+                <h2 class="skill-name">approval</h2>
+                <p class="skill-desc">Imported skill approval from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/approval/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="arctic_frost" data-desc="imported skill arctic_frost from anthropic">
+                <h2 class="skill-name">arctic_frost</h2>
+                <p class="skill-desc">Imported skill arctic_frost from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/arctic_frost/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="arsenalsc_ofl" data-desc="imported skill arsenalsc_ofl from anthropic">
+                <h2 class="skill-name">arsenalsc_ofl</h2>
+                <p class="skill-desc">Imported skill arsenalsc_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/arsenalsc_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="arxiv_search" data-desc="imported skill arxiv_search from langchain">
+                <h2 class="skill-name">arxiv_search</h2>
+                <p class="skill-desc">Imported skill arxiv_search from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/arxiv_search/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="async_api_routes" data-desc="imported skill async_api_routes from vercel">
+                <h2 class="skill-name">async_api_routes</h2>
+                <p class="skill-desc">Imported skill async_api_routes from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/async_api_routes/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="async_defer_await" data-desc="imported skill async_defer_await from vercel">
+                <h2 class="skill-name">async_defer_await</h2>
+                <p class="skill-desc">Imported skill async_defer_await from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/async_defer_await/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="async_dependencies" data-desc="imported skill async_dependencies from vercel">
+                <h2 class="skill-name">async_dependencies</h2>
+                <p class="skill-desc">Imported skill async_dependencies from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/async_dependencies/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="async_parallel" data-desc="imported skill async_parallel from vercel">
+                <h2 class="skill-name">async_parallel</h2>
+                <p class="skill-desc">Imported skill async_parallel from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/async_parallel/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="async_suspense_boundaries" data-desc="imported skill async_suspense_boundaries from vercel">
+                <h2 class="skill-name">async_suspense_boundaries</h2>
+                <p class="skill-desc">Imported skill async_suspense_boundaries from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/async_suspense_boundaries/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="autocomplete" data-desc="imported skill autocomplete from langchain">
+                <h2 class="skill-name">autocomplete</h2>
+                <p class="skill-desc">Imported skill autocomplete from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/autocomplete/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="backend" data-desc="imported skill backend from langchain">
+                <h2 class="skill-name">backend</h2>
+                <p class="skill-desc">Imported skill backend from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/backend/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="base" data-desc="imported skill base from anthropic">
+                <h2 class="skill-name">base</h2>
+                <p class="skill-desc">Imported skill base from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/base/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="basic_research" data-desc="imported skill basic_research from openai">
+                <h2 class="skill-name">basic_research</h2>
+                <p class="skill-desc">Imported skill basic_research from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/basic_research/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="basic_spec_implementation" data-desc="imported skill basic_spec_implementation from openai">
+                <h2 class="skill-name">basic_spec_implementation</h2>
+                <p class="skill-desc">Imported skill basic_spec_implementation from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/basic_spec_implementation/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bigshoulders_ofl" data-desc="imported skill bigshoulders_ofl from anthropic">
+                <h2 class="skill-name">bigshoulders_ofl</h2>
+                <p class="skill-desc">Imported skill bigshoulders_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/bigshoulders_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="boldonse_ofl" data-desc="imported skill boldonse_ofl from anthropic">
+                <h2 class="skill-name">boldonse_ofl</h2>
+                <p class="skill-desc">Imported skill boldonse_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/boldonse_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="botanical_garden" data-desc="imported skill botanical_garden from anthropic">
+                <h2 class="skill-name">botanical_garden</h2>
+                <p class="skill-desc">Imported skill botanical_garden from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/botanical_garden/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="brainstorming_template" data-desc="imported skill brainstorming_template from openai">
+                <h2 class="skill-name">brainstorming_template</h2>
+                <p class="skill-desc">Imported skill brainstorming_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/brainstorming_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bricolagegrotesque_ofl" data-desc="imported skill bricolagegrotesque_ofl from anthropic">
+                <h2 class="skill-name">bricolagegrotesque_ofl</h2>
+                <p class="skill-desc">Imported skill bricolagegrotesque_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/bricolagegrotesque_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="build" data-desc="imported skill build from vercel">
+                <h2 class="skill-name">build</h2>
+                <p class="skill-desc">Imported skill build from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/build/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bundle_barrel_imports" data-desc="imported skill bundle_barrel_imports from vercel">
+                <h2 class="skill-name">bundle_barrel_imports</h2>
+                <p class="skill-desc">Imported skill bundle_barrel_imports from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/bundle_barrel_imports/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bundle_conditional" data-desc="imported skill bundle_conditional from vercel">
+                <h2 class="skill-name">bundle_conditional</h2>
+                <p class="skill-desc">Imported skill bundle_conditional from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/bundle_conditional/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bundle_defer_third_party" data-desc="imported skill bundle_defer_third_party from vercel">
+                <h2 class="skill-name">bundle_defer_third_party</h2>
+                <p class="skill-desc">Imported skill bundle_defer_third_party from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/bundle_defer_third_party/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bundle_dynamic_imports" data-desc="imported skill bundle_dynamic_imports from vercel">
+                <h2 class="skill-name">bundle_dynamic_imports</h2>
+                <p class="skill-desc">Imported skill bundle_dynamic_imports from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/bundle_dynamic_imports/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="bundle_preload" data-desc="imported skill bundle_preload from vercel">
+                <h2 class="skill-name">bundle_preload</h2>
+                <p class="skill-desc">Imported skill bundle_preload from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/bundle_preload/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="chat_input" data-desc="imported skill chat_input from langchain">
+                <h2 class="skill-name">chat_input</h2>
+                <p class="skill-desc">Imported skill chat_input from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/chat_input/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="check_bounding_boxes" data-desc="imported skill check_bounding_boxes from anthropic">
+                <h2 class="skill-name">check_bounding_boxes</h2>
+                <p class="skill-desc">Imported skill check_bounding_boxes from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/check_bounding_boxes/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="check_fillable_fields" data-desc="imported skill check_fillable_fields from anthropic">
+                <h2 class="skill-name">check_fillable_fields</h2>
+                <p class="skill-desc">Imported skill check_fillable_fields from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/check_fillable_fields/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="citations" data-desc="imported skill citations from openai">
+                <h2 class="skill-name">citations</h2>
+                <p class="skill-desc">Imported skill citations from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/citations/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="cla" data-desc="imported skill cla from openai">
+                <h2 class="skill-name">cla</h2>
+                <p class="skill-desc">Imported skill cla from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/cla/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="claude" data-desc="imported skill claude from agentskills">
+                <h2 class="skill-name">claude</h2>
+                <p class="skill-desc">Imported skill claude from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/claude/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="claude" data-desc="imported skill claude from vercel">
+                <h2 class="skill-name">claude</h2>
+                <p class="skill-desc">Imported skill claude from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/claude/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="cli" data-desc="imported skill cli from agentskills">
+                <h2 class="skill-name">cli</h2>
+                <p class="skill-desc">Imported skill cli from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/cli/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="client_event_listeners" data-desc="imported skill client_event_listeners from vercel">
+                <h2 class="skill-name">client_event_listeners</h2>
+                <p class="skill-desc">Imported skill client_event_listeners from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/client_event_listeners/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="client_localstorage_schema" data-desc="imported skill client_localstorage_schema from vercel">
+                <h2 class="skill-name">client_localstorage_schema</h2>
+                <p class="skill-desc">Imported skill client_localstorage_schema from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/client_localstorage_schema/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="client_passive_event_listeners" data-desc="imported skill client_passive_event_listeners from vercel">
+                <h2 class="skill-name">client_passive_event_listeners</h2>
+                <p class="skill-desc">Imported skill client_passive_event_listeners from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/client_passive_event_listeners/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="client_swr_dedup" data-desc="imported skill client_swr_dedup from vercel">
+                <h2 class="skill-name">client_swr_dedup</h2>
+                <p class="skill-desc">Imported skill client_swr_dedup from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/client_swr_dedup/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="clipboard" data-desc="imported skill clipboard from langchain">
+                <h2 class="skill-name">clipboard</h2>
+                <p class="skill-desc">Imported skill clipboard from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/clipboard/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="commands" data-desc="imported skill commands from langchain">
+                <h2 class="skill-name">commands</h2>
+                <p class="skill-desc">Imported skill commands from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/commands/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="company_newsletter" data-desc="imported skill company_newsletter from anthropic">
+                <h2 class="skill-name">company_newsletter</h2>
+                <p class="skill-desc">Imported skill company_newsletter from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/company_newsletter/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="comparison_format" data-desc="imported skill comparison_format from openai">
+                <h2 class="skill-name">comparison_format</h2>
+                <p class="skill-desc">Imported skill comparison_format from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/comparison_format/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="comparison_template" data-desc="imported skill comparison_template from openai">
+                <h2 class="skill-name">comparison_template</h2>
+                <p class="skill-desc">Imported skill comparison_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/comparison_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="competitor_analysis" data-desc="imported skill competitor_analysis from openai">
+                <h2 class="skill-name">competitor_analysis</h2>
+                <p class="skill-desc">Imported skill competitor_analysis from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/competitor_analysis/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="composite" data-desc="imported skill composite from langchain">
+                <h2 class="skill-name">composite</h2>
+                <p class="skill-desc">Imported skill composite from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/composite/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="comprehensive_report_format" data-desc="imported skill comprehensive_report_format from openai">
+                <h2 class="skill-name">comprehensive_report_format</h2>
+                <p class="skill-desc">Imported skill comprehensive_report_format from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/comprehensive_report_format/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="comprehensive_report_template" data-desc="imported skill comprehensive_report_template from openai">
+                <h2 class="skill-name">comprehensive_report_template</h2>
+                <p class="skill-desc">Imported skill comprehensive_report_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/comprehensive_report_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="config" data-desc="imported skill config from langchain">
+                <h2 class="skill-name">config</h2>
+                <p class="skill-desc">Imported skill config from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/config/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="config" data-desc="imported skill config from vercel">
+                <h2 class="skill-name">config</h2>
+                <p class="skill-desc">Imported skill config from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/config/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="connections" data-desc="imported skill connections from anthropic">
+                <h2 class="skill-name">connections</h2>
+                <p class="skill-desc">Imported skill connections from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/connections/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="content_writer" data-desc="imported skill content_writer from langchain">
+                <h2 class="skill-name">content_writer</h2>
+                <p class="skill-desc">Imported skill content_writer from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/content_writer/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="contributing" data-desc="imported skill contributing from openai">
+                <h2 class="skill-name">contributing</h2>
+                <p class="skill-desc">Imported skill contributing from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/contributing/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="conversation_to_faq" data-desc="imported skill conversation_to_faq from openai">
+                <h2 class="skill-name">conversation_to_faq</h2>
+                <p class="skill-desc">Imported skill conversation_to_faq from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/conversation_to_faq/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="conversation_to_wiki" data-desc="imported skill conversation_to_wiki from openai">
+                <h2 class="skill-name">conversation_to_wiki</h2>
+                <p class="skill-desc">Imported skill conversation_to_wiki from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/conversation_to_wiki/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="convert_pdf_to_images" data-desc="imported skill convert_pdf_to_images from anthropic">
+                <h2 class="skill-name">convert_pdf_to_images</h2>
+                <p class="skill-desc">Imported skill convert_pdf_to_images from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/convert_pdf_to_images/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="create_validation_image" data-desc="imported skill create_validation_image from anthropic">
+                <h2 class="skill-name">create_validation_image</h2>
+                <p class="skill-desc">Imported skill create_validation_image from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/create_validation_image/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="crimsonpro_ofl" data-desc="imported skill crimsonpro_ofl from anthropic">
+                <h2 class="skill-name">crimsonpro_ofl</h2>
+                <p class="skill-desc">Imported skill crimsonpro_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/crimsonpro_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="customer_meeting" data-desc="imported skill customer_meeting from openai">
+                <h2 class="skill-name">customer_meeting</h2>
+                <p class="skill-desc">Imported skill customer_meeting from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/customer_meeting/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="database_best_practices" data-desc="imported skill database_best_practices from openai">
+                <h2 class="skill-name">database_best_practices</h2>
+                <p class="skill-desc">Imported skill database_best_practices from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/database_best_practices/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="database_migration" data-desc="imported skill database_migration from openai">
+                <h2 class="skill-name">database_migration</h2>
+                <p class="skill-desc">Imported skill database_migration from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/database_migration/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="daytona" data-desc="imported skill daytona from langchain">
+                <h2 class="skill-name">daytona</h2>
+                <p class="skill-desc">Imported skill daytona from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/daytona/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="decision_capture" data-desc="imported skill decision_capture from openai">
+                <h2 class="skill-name">decision_capture</h2>
+                <p class="skill-desc">Imported skill decision_capture from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/decision_capture/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="decision_log_database" data-desc="imported skill decision_log_database from openai">
+                <h2 class="skill-name">decision_log_database</h2>
+                <p class="skill-desc">Imported skill decision_log_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/decision_log_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="decision_meeting_prep" data-desc="imported skill decision_meeting_prep from openai">
+                <h2 class="skill-name">decision_meeting_prep</h2>
+                <p class="skill-desc">Imported skill decision_meeting_prep from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/decision_meeting_prep/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="decision_meeting_template" data-desc="imported skill decision_meeting_template from openai">
+                <h2 class="skill-name">decision_meeting_template</h2>
+                <p class="skill-desc">Imported skill decision_meeting_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/decision_meeting_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="decision_record" data-desc="imported skill decision_record from openai">
+                <h2 class="skill-name">decision_record</h2>
+                <p class="skill-desc">Imported skill decision_record from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/decision_record/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="deepagents_wrapper" data-desc="imported skill deepagents_wrapper from langchain">
+                <h2 class="skill-name">deepagents_wrapper</h2>
+                <p class="skill-desc">Imported skill deepagents_wrapper from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/deepagents_wrapper/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="default_agent_prompt" data-desc="imported skill default_agent_prompt from langchain">
+                <h2 class="skill-name">default_agent_prompt</h2>
+                <p class="skill-desc">Imported skill default_agent_prompt from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/default_agent_prompt/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="desert_rose" data-desc="imported skill desert_rose from anthropic">
+                <h2 class="skill-name">desert_rose</h2>
+                <p class="skill-desc">Imported skill desert_rose from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/desert_rose/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="diff" data-desc="imported skill diff from langchain">
+                <h2 class="skill-name">diff</h2>
+                <p class="skill-desc">Imported skill diff from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/diff/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="dmmono_ofl" data-desc="imported skill dmmono_ofl from anthropic">
+                <h2 class="skill-name">dmmono_ofl</h2>
+                <p class="skill-desc">Imported skill dmmono_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/dmmono_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="docs" data-desc="imported skill docs from agentskills">
+                <h2 class="skill-name">docs</h2>
+                <p class="skill-desc">Imported skill docs from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/docs/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="document" data-desc="imported skill document from anthropic">
+                <h2 class="skill-name">document</h2>
+                <p class="skill-desc">Imported skill document from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/document/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="documentation_database" data-desc="imported skill documentation_database from openai">
+                <h2 class="skill-name">documentation_database</h2>
+                <p class="skill-desc">Imported skill documentation_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/documentation_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="docx" data-desc="imported skill docx from anthropic">
+                <h2 class="skill-name">docx</h2>
+                <p class="skill-desc">Imported skill docx from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/docx/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="docx_js" data-desc="imported skill docx_js from anthropic">
+                <h2 class="skill-name">docx_js</h2>
+                <p class="skill-desc">Imported skill docx_js from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/docx_js/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="easing" data-desc="imported skill easing from anthropic">
+                <h2 class="skill-name">easing</h2>
+                <p class="skill-desc">Imported skill easing from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/easing/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ericaone_ofl" data-desc="imported skill ericaone_ofl from anthropic">
+                <h2 class="skill-name">ericaone_ofl</h2>
+                <p class="skill-desc">Imported skill ericaone_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/ericaone_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="errors" data-desc="imported skill errors from agentskills">
+                <h2 class="skill-name">errors</h2>
+                <p class="skill-desc">Imported skill errors from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/errors/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="evaluation" data-desc="imported skill evaluation from anthropic">
+                <h2 class="skill-name">evaluation</h2>
+                <p class="skill-desc">Imported skill evaluation from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/evaluation/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="executive_review" data-desc="imported skill executive_review from openai">
+                <h2 class="skill-name">executive_review</h2>
+                <p class="skill-desc">Imported skill executive_review from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/executive_review/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="extract_form_field_info" data-desc="imported skill extract_form_field_info from anthropic">
+                <h2 class="skill-name">extract_form_field_info</h2>
+                <p class="skill-desc">Imported skill extract_form_field_info from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/extract_form_field_info/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="faq_answers" data-desc="imported skill faq_answers from anthropic">
+                <h2 class="skill-name">faq_answers</h2>
+                <p class="skill-desc">Imported skill faq_answers from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/faq_answers/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="faq_database" data-desc="imported skill faq_database from openai">
+                <h2 class="skill-name">faq_database</h2>
+                <p class="skill-desc">Imported skill faq_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/faq_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="fetch_comments" data-desc="imported skill fetch_comments from openai">
+                <h2 class="skill-name">fetch_comments</h2>
+                <p class="skill-desc">Imported skill fetch_comments from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/fetch_comments/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="file_ops" data-desc="imported skill file_ops from langchain">
+                <h2 class="skill-name">file_ops</h2>
+                <p class="skill-desc">Imported skill file_ops from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/file_ops/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="filesystem" data-desc="imported skill filesystem from langchain">
+                <h2 class="skill-name">filesystem</h2>
+                <p class="skill-desc">Imported skill filesystem from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/filesystem/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="fill_fillable_fields" data-desc="imported skill fill_fillable_fields from anthropic">
+                <h2 class="skill-name">fill_fillable_fields</h2>
+                <p class="skill-desc">Imported skill fill_fillable_fields from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/fill_fillable_fields/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="fill_pdf_form_with_annotations" data-desc="imported skill fill_pdf_form_with_annotations from anthropic">
+                <h2 class="skill-name">fill_pdf_form_with_annotations</h2>
+                <p class="skill-desc">Imported skill fill_pdf_form_with_annotations from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/fill_pdf_form_with_annotations/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="forest_canopy" data-desc="imported skill forest_canopy from anthropic">
+                <h2 class="skill-name">forest_canopy</h2>
+                <p class="skill-desc">Imported skill forest_canopy from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/forest_canopy/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="format_selection_guide" data-desc="imported skill format_selection_guide from openai">
+                <h2 class="skill-name">format_selection_guide</h2>
+                <p class="skill-desc">Imported skill format_selection_guide from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/format_selection_guide/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="forms" data-desc="imported skill forms from anthropic">
+                <h2 class="skill-name">forms</h2>
+                <p class="skill-desc">Imported skill forms from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/forms/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="frame_composer" data-desc="imported skill frame_composer from anthropic">
+                <h2 class="skill-name">frame_composer</h2>
+                <p class="skill-desc">Imported skill frame_composer from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/frame_composer/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="geistmono_ofl" data-desc="imported skill geistmono_ofl from anthropic">
+                <h2 class="skill-name">geistmono_ofl</h2>
+                <p class="skill-desc">Imported skill geistmono_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/geistmono_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="general_comms" data-desc="imported skill general_comms from anthropic">
+                <h2 class="skill-name">general_comms</h2>
+                <p class="skill-desc">Imported skill general_comms from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/general_comms/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="generator_template" data-desc="imported skill generator_template from anthropic">
+                <h2 class="skill-name">generator_template</h2>
+                <p class="skill-desc">Imported skill generator_template from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/generator_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="gif_builder" data-desc="imported skill gif_builder from anthropic">
+                <h2 class="skill-name">gif_builder</h2>
+                <p class="skill-desc">Imported skill gif_builder from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/gif_builder/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="github_utils" data-desc="imported skill github_utils from openai">
+                <h2 class="skill-name">github_utils</h2>
+                <p class="skill-desc">Imported skill github_utils from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/github_utils/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="gloock_ofl" data-desc="imported skill gloock_ofl from anthropic">
+                <h2 class="skill-name">gloock_ofl</h2>
+                <p class="skill-desc">Imported skill gloock_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/gloock_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="golden_hour" data-desc="imported skill golden_hour from anthropic">
+                <h2 class="skill-name">golden_hour</h2>
+                <p class="skill-desc">Imported skill golden_hour from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/golden_hour/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="graph" data-desc="imported skill graph from langchain">
+                <h2 class="skill-name">graph</h2>
+                <p class="skill-desc">Imported skill graph from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/graph/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="harbor_langsmith" data-desc="imported skill harbor_langsmith from langchain">
+                <h2 class="skill-name">harbor_langsmith</h2>
+                <p class="skill-desc">Imported skill harbor_langsmith from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/harbor_langsmith/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="history" data-desc="imported skill history from langchain">
+                <h2 class="skill-name">history</h2>
+                <p class="skill-desc">Imported skill history from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/history/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="how_to_guide" data-desc="imported skill how_to_guide from openai">
+                <h2 class="skill-name">how_to_guide</h2>
+                <p class="skill-desc">Imported skill how_to_guide from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/how_to_guide/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="how_to_guide_database" data-desc="imported skill how_to_guide_database from openai">
+                <h2 class="skill-name">how_to_guide_database</h2>
+                <p class="skill-desc">Imported skill how_to_guide_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/how_to_guide_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="html2pptx" data-desc="imported skill html2pptx from anthropic">
+                <h2 class="skill-name">html2pptx</h2>
+                <p class="skill-desc">Imported skill html2pptx from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/html2pptx/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ibmplexmono_ofl" data-desc="imported skill ibmplexmono_ofl from anthropic">
+                <h2 class="skill-name">ibmplexmono_ofl</h2>
+                <p class="skill-desc">Imported skill ibmplexmono_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/ibmplexmono_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="image_utils" data-desc="imported skill image_utils from langchain">
+                <h2 class="skill-name">image_utils</h2>
+                <p class="skill-desc">Imported skill image_utils from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/image_utils/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="init_skill" data-desc="imported skill init_skill from openai">
+                <h2 class="skill-name">init_skill</h2>
+                <p class="skill-desc">Imported skill init_skill from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/init_skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="init_skill" data-desc="imported skill init_skill from langchain">
+                <h2 class="skill-name">init_skill</h2>
+                <p class="skill-desc">Imported skill init_skill from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/init_skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="init_skill" data-desc="imported skill init_skill from anthropic">
+                <h2 class="skill-name">init_skill</h2>
+                <p class="skill-desc">Imported skill init_skill from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/init_skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="input" data-desc="imported skill input from langchain">
+                <h2 class="skill-name">input</h2>
+                <p class="skill-desc">Imported skill input from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/input/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="inspect_pr_checks" data-desc="imported skill inspect_pr_checks from openai">
+                <h2 class="skill-name">inspect_pr_checks</h2>
+                <p class="skill-desc">Imported skill inspect_pr_checks from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/inspect_pr_checks/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="install_skill_from_github" data-desc="imported skill install_skill_from_github from openai">
+                <h2 class="skill-name">install_skill_from_github</h2>
+                <p class="skill-desc">Imported skill install_skill_from_github from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/install_skill_from_github/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="instrumentsans_ofl" data-desc="imported skill instrumentsans_ofl from anthropic">
+                <h2 class="skill-name">instrumentsans_ofl</h2>
+                <p class="skill-desc">Imported skill instrumentsans_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/instrumentsans_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="inventory" data-desc="imported skill inventory from anthropic">
+                <h2 class="skill-name">inventory</h2>
+                <p class="skill-desc">Imported skill inventory from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/inventory/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="italiana_ofl" data-desc="imported skill italiana_ofl from anthropic">
+                <h2 class="skill-name">italiana_ofl</h2>
+                <p class="skill-desc">Imported skill italiana_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/italiana_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="jetbrainsmono_ofl" data-desc="imported skill jetbrainsmono_ofl from anthropic">
+                <h2 class="skill-name">jetbrainsmono_ofl</h2>
+                <p class="skill-desc">Imported skill jetbrainsmono_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/jetbrainsmono_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_batch_dom_css" data-desc="imported skill js_batch_dom_css from vercel">
+                <h2 class="skill-name">js_batch_dom_css</h2>
+                <p class="skill-desc">Imported skill js_batch_dom_css from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_batch_dom_css/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_cache_function_results" data-desc="imported skill js_cache_function_results from vercel">
+                <h2 class="skill-name">js_cache_function_results</h2>
+                <p class="skill-desc">Imported skill js_cache_function_results from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_cache_function_results/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_cache_property_access" data-desc="imported skill js_cache_property_access from vercel">
+                <h2 class="skill-name">js_cache_property_access</h2>
+                <p class="skill-desc">Imported skill js_cache_property_access from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_cache_property_access/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_cache_storage" data-desc="imported skill js_cache_storage from vercel">
+                <h2 class="skill-name">js_cache_storage</h2>
+                <p class="skill-desc">Imported skill js_cache_storage from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_cache_storage/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_combine_iterations" data-desc="imported skill js_combine_iterations from vercel">
+                <h2 class="skill-name">js_combine_iterations</h2>
+                <p class="skill-desc">Imported skill js_combine_iterations from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_combine_iterations/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_early_exit" data-desc="imported skill js_early_exit from vercel">
+                <h2 class="skill-name">js_early_exit</h2>
+                <p class="skill-desc">Imported skill js_early_exit from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_early_exit/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_hoist_regexp" data-desc="imported skill js_hoist_regexp from vercel">
+                <h2 class="skill-name">js_hoist_regexp</h2>
+                <p class="skill-desc">Imported skill js_hoist_regexp from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_hoist_regexp/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_index_maps" data-desc="imported skill js_index_maps from vercel">
+                <h2 class="skill-name">js_index_maps</h2>
+                <p class="skill-desc">Imported skill js_index_maps from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_index_maps/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_length_check_first" data-desc="imported skill js_length_check_first from vercel">
+                <h2 class="skill-name">js_length_check_first</h2>
+                <p class="skill-desc">Imported skill js_length_check_first from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_length_check_first/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_min_max_loop" data-desc="imported skill js_min_max_loop from vercel">
+                <h2 class="skill-name">js_min_max_loop</h2>
+                <p class="skill-desc">Imported skill js_min_max_loop from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_min_max_loop/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_set_map_lookups" data-desc="imported skill js_set_map_lookups from vercel">
+                <h2 class="skill-name">js_set_map_lookups</h2>
+                <p class="skill-desc">Imported skill js_set_map_lookups from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_set_map_lookups/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="js_tosorted_immutable" data-desc="imported skill js_tosorted_immutable from vercel">
+                <h2 class="skill-name">js_tosorted_immutable</h2>
+                <p class="skill-desc">Imported skill js_tosorted_immutable from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/js_tosorted_immutable/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="jura_ofl" data-desc="imported skill jura_ofl from anthropic">
+                <h2 class="skill-name">jura_ofl</h2>
+                <p class="skill-desc">Imported skill jura_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/jura_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="learning_database" data-desc="imported skill learning_database from openai">
+                <h2 class="skill-name">learning_database</h2>
+                <p class="skill-desc">Imported skill learning_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/learning_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="librebaskerville_ofl" data-desc="imported skill librebaskerville_ofl from anthropic">
+                <h2 class="skill-name">librebaskerville_ofl</h2>
+                <p class="skill-desc">Imported skill librebaskerville_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/librebaskerville_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="license" data-desc="imported skill license from openai">
+                <h2 class="skill-name">license</h2>
+                <p class="skill-desc">Imported skill license from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/license/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="license" data-desc="imported skill license from anthropic">
+                <h2 class="skill-name">license</h2>
+                <p class="skill-desc">Imported skill license from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/license/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="list_skills" data-desc="imported skill list_skills from openai">
+                <h2 class="skill-name">list_skills</h2>
+                <p class="skill-desc">Imported skill list_skills from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/list_skills/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="load" data-desc="imported skill load from langchain">
+                <h2 class="skill-name">load</h2>
+                <p class="skill-desc">Imported skill load from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/load/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="loading" data-desc="imported skill loading from langchain">
+                <h2 class="skill-name">loading</h2>
+                <p class="skill-desc">Imported skill loading from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/loading/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="local_context" data-desc="imported skill local_context from langchain">
+                <h2 class="skill-name">local_context</h2>
+                <p class="skill-desc">Imported skill local_context from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/local_context/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="lora_ofl" data-desc="imported skill lora_ofl from anthropic">
+                <h2 class="skill-name">lora_ofl</h2>
+                <p class="skill-desc">Imported skill lora_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/lora_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="main" data-desc="imported skill main from langchain">
+                <h2 class="skill-name">main</h2>
+                <p class="skill-desc">Imported skill main from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/main/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="market_research" data-desc="imported skill market_research from openai">
+                <h2 class="skill-name">market_research</h2>
+                <p class="skill-desc">Imported skill market_research from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/market_research/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="marketplace" data-desc="imported skill marketplace from anthropic">
+                <h2 class="skill-name">marketplace</h2>
+                <p class="skill-desc">Imported skill marketplace from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/marketplace/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="mcp_best_practices" data-desc="imported skill mcp_best_practices from anthropic">
+                <h2 class="skill-name">mcp_best_practices</h2>
+                <p class="skill-desc">Imported skill mcp_best_practices from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/mcp_best_practices/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="memory" data-desc="imported skill memory from langchain">
+                <h2 class="skill-name">memory</h2>
+                <p class="skill-desc">Imported skill memory from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/memory/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="messages" data-desc="imported skill messages from langchain">
+                <h2 class="skill-name">messages</h2>
+                <p class="skill-desc">Imported skill messages from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/messages/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="metadata" data-desc="imported skill metadata from vercel">
+                <h2 class="skill-name">metadata</h2>
+                <p class="skill-desc">Imported skill metadata from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/metadata/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="midnight_galaxy" data-desc="imported skill midnight_galaxy from anthropic">
+                <h2 class="skill-name">midnight_galaxy</h2>
+                <p class="skill-desc">Imported skill midnight_galaxy from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/midnight_galaxy/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="migrate" data-desc="imported skill migrate from vercel">
+                <h2 class="skill-name">migrate</h2>
+                <p class="skill-desc">Imported skill migrate from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/migrate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="milestone_summary_template" data-desc="imported skill milestone_summary_template from openai">
+                <h2 class="skill-name">milestone_summary_template</h2>
+                <p class="skill-desc">Imported skill milestone_summary_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/milestone_summary_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="modal" data-desc="imported skill modal from langchain">
+                <h2 class="skill-name">modal</h2>
+                <p class="skill-desc">Imported skill modal from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/modal/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="models" data-desc="imported skill models from agentskills">
+                <h2 class="skill-name">models</h2>
+                <p class="skill-desc">Imported skill models from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/models/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="modern_minimalist" data-desc="imported skill modern_minimalist from anthropic">
+                <h2 class="skill-name">modern_minimalist</h2>
+                <p class="skill-desc">Imported skill modern_minimalist from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/modern_minimalist/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="nationalpark_ofl" data-desc="imported skill nationalpark_ofl from anthropic">
+                <h2 class="skill-name">nationalpark_ofl</h2>
+                <p class="skill-desc">Imported skill nationalpark_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/nationalpark_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="node_mcp_server" data-desc="imported skill node_mcp_server from anthropic">
+                <h2 class="skill-name">node_mcp_server</h2>
+                <p class="skill-desc">Imported skill node_mcp_server from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/node_mcp_server/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="nothingyoucoulddo_ofl" data-desc="imported skill nothingyoucoulddo_ofl from anthropic">
+                <h2 class="skill-name">nothingyoucoulddo_ofl</h2>
+                <p class="skill-desc">Imported skill nothingyoucoulddo_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/nothingyoucoulddo_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ocean_depths" data-desc="imported skill ocean_depths from anthropic">
+                <h2 class="skill-name">ocean_depths</h2>
+                <p class="skill-desc">Imported skill ocean_depths from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/ocean_depths/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="one_on_one_template" data-desc="imported skill one_on_one_template from openai">
+                <h2 class="skill-name">one_on_one_template</h2>
+                <p class="skill-desc">Imported skill one_on_one_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/one_on_one_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ooxml" data-desc="imported skill ooxml from anthropic">
+                <h2 class="skill-name">ooxml</h2>
+                <p class="skill-desc">Imported skill ooxml from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/ooxml/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="outfit_ofl" data-desc="imported skill outfit_ofl from anthropic">
+                <h2 class="skill-name">outfit_ofl</h2>
+                <p class="skill-desc">Imported skill outfit_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/outfit_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="output_patterns" data-desc="imported skill output_patterns from anthropic">
+                <h2 class="skill-name">output_patterns</h2>
+                <p class="skill-desc">Imported skill output_patterns from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/output_patterns/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="pack" data-desc="imported skill pack from anthropic">
+                <h2 class="skill-name">pack</h2>
+                <p class="skill-desc">Imported skill pack from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/pack/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="package" data-desc="imported skill package from vercel">
+                <h2 class="skill-name">package</h2>
+                <p class="skill-desc">Imported skill package from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/package/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="package_skill" data-desc="imported skill package_skill from openai">
+                <h2 class="skill-name">package_skill</h2>
+                <p class="skill-desc">Imported skill package_skill from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/package_skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="package_skill" data-desc="imported skill package_skill from anthropic">
+                <h2 class="skill-name">package_skill</h2>
+                <p class="skill-desc">Imported skill package_skill from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/package_skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="parser" data-desc="imported skill parser from agentskills">
+                <h2 class="skill-name">parser</h2>
+                <p class="skill-desc">Imported skill parser from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/parser/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="parser" data-desc="imported skill parser from vercel">
+                <h2 class="skill-name">parser</h2>
+                <p class="skill-desc">Imported skill parser from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/parser/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="patch_tool_calls" data-desc="imported skill patch_tool_calls from langchain">
+                <h2 class="skill-name">patch_tool_calls</h2>
+                <p class="skill-desc">Imported skill patch_tool_calls from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/patch_tool_calls/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="pixelifysans_ofl" data-desc="imported skill pixelifysans_ofl from anthropic">
+                <h2 class="skill-name">pixelifysans_ofl</h2>
+                <p class="skill-desc">Imported skill pixelifysans_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/pixelifysans_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="poiretone_ofl" data-desc="imported skill poiretone_ofl from anthropic">
+                <h2 class="skill-name">poiretone_ofl</h2>
+                <p class="skill-desc">Imported skill poiretone_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/poiretone_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="pptx" data-desc="imported skill pptx from anthropic">
+                <h2 class="skill-name">pptx</h2>
+                <p class="skill-desc">Imported skill pptx from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/pptx/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="progress_tracking" data-desc="imported skill progress_tracking from openai">
+                <h2 class="skill-name">progress_tracking</h2>
+                <p class="skill-desc">Imported skill progress_tracking from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/progress_tracking/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="progress_update_template" data-desc="imported skill progress_update_template from openai">
+                <h2 class="skill-name">progress_update_template</h2>
+                <p class="skill-desc">Imported skill progress_update_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/progress_update_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="project_decision" data-desc="imported skill project_decision from openai">
+                <h2 class="skill-name">project_decision</h2>
+                <p class="skill-desc">Imported skill project_decision from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/project_decision/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="project_utils" data-desc="imported skill project_utils from langchain">
+                <h2 class="skill-name">project_utils</h2>
+                <p class="skill-desc">Imported skill project_utils from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/project_utils/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="prompt" data-desc="imported skill prompt from agentskills">
+                <h2 class="skill-name">prompt</h2>
+                <p class="skill-desc">Imported skill prompt from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/prompt/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="protocol" data-desc="imported skill protocol from langchain">
+                <h2 class="skill-name">protocol</h2>
+                <p class="skill-desc">Imported skill protocol from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/protocol/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="python_mcp_server" data-desc="imported skill python_mcp_server from anthropic">
+                <h2 class="skill-name">python_mcp_server</h2>
+                <p class="skill-desc">Imported skill python_mcp_server from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/python_mcp_server/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="quick_brief_format" data-desc="imported skill quick_brief_format from openai">
+                <h2 class="skill-name">quick_brief_format</h2>
+                <p class="skill-desc">Imported skill quick_brief_format from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/quick_brief_format/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="quick_brief_template" data-desc="imported skill quick_brief_template from openai">
+                <h2 class="skill-name">quick_brief_template</h2>
+                <p class="skill-desc">Imported skill quick_brief_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/quick_brief_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="quick_implementation_plan" data-desc="imported skill quick_implementation_plan from openai">
+                <h2 class="skill-name">quick_implementation_plan</h2>
+                <p class="skill-desc">Imported skill quick_implementation_plan from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/quick_implementation_plan/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="quick_validate" data-desc="imported skill quick_validate from openai">
+                <h2 class="skill-name">quick_validate</h2>
+                <p class="skill-desc">Imported skill quick_validate from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/quick_validate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="quick_validate" data-desc="imported skill quick_validate from langchain">
+                <h2 class="skill-name">quick_validate</h2>
+                <p class="skill-desc">Imported skill quick_validate from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/quick_validate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="quick_validate" data-desc="imported skill quick_validate from anthropic">
+                <h2 class="skill-name">quick_validate</h2>
+                <p class="skill-desc">Imported skill quick_validate from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/quick_validate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ralph_mode" data-desc="imported skill ralph_mode from langchain">
+                <h2 class="skill-name">ralph_mode</h2>
+                <p class="skill-desc">Imported skill ralph_mode from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/ralph_mode/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="readme" data-desc="imported skill readme from openai">
+                <h2 class="skill-name">readme</h2>
+                <p class="skill-desc">Imported skill readme from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/readme/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="readme" data-desc="imported skill readme from agentskills">
+                <h2 class="skill-name">readme</h2>
+                <p class="skill-desc">Imported skill readme from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/readme/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="readme" data-desc="imported skill readme from langchain">
+                <h2 class="skill-name">readme</h2>
+                <p class="skill-desc">Imported skill readme from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/readme/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="readme" data-desc="imported skill readme from vercel">
+                <h2 class="skill-name">readme</h2>
+                <p class="skill-desc">Imported skill readme from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/readme/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="readme" data-desc="imported skill readme from anthropic">
+                <h2 class="skill-name">readme</h2>
+                <p class="skill-desc">Imported skill readme from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/readme/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rearrange" data-desc="imported skill rearrange from anthropic">
+                <h2 class="skill-name">rearrange</h2>
+                <p class="skill-desc">Imported skill rearrange from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/rearrange/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="recalc" data-desc="imported skill recalc from anthropic">
+                <h2 class="skill-name">recalc</h2>
+                <p class="skill-desc">Imported skill recalc from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/recalc/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="redhatmono_ofl" data-desc="imported skill redhatmono_ofl from anthropic">
+                <h2 class="skill-name">redhatmono_ofl</h2>
+                <p class="skill-desc">Imported skill redhatmono_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/redhatmono_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="redlining" data-desc="imported skill redlining from anthropic">
+                <h2 class="skill-name">redlining</h2>
+                <p class="skill-desc">Imported skill redlining from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/redlining/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="reference" data-desc="imported skill reference from anthropic">
+                <h2 class="skill-name">reference</h2>
+                <p class="skill-desc">Imported skill reference from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/reference/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_activity" data-desc="imported skill rendering_activity from vercel">
+                <h2 class="skill-name">rendering_activity</h2>
+                <p class="skill-desc">Imported skill rendering_activity from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_activity/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_animate_svg_wrapper" data-desc="imported skill rendering_animate_svg_wrapper from vercel">
+                <h2 class="skill-name">rendering_animate_svg_wrapper</h2>
+                <p class="skill-desc">Imported skill rendering_animate_svg_wrapper from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_animate_svg_wrapper/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_conditional_render" data-desc="imported skill rendering_conditional_render from vercel">
+                <h2 class="skill-name">rendering_conditional_render</h2>
+                <p class="skill-desc">Imported skill rendering_conditional_render from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_conditional_render/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_content_visibility" data-desc="imported skill rendering_content_visibility from vercel">
+                <h2 class="skill-name">rendering_content_visibility</h2>
+                <p class="skill-desc">Imported skill rendering_content_visibility from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_content_visibility/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_hoist_jsx" data-desc="imported skill rendering_hoist_jsx from vercel">
+                <h2 class="skill-name">rendering_hoist_jsx</h2>
+                <p class="skill-desc">Imported skill rendering_hoist_jsx from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_hoist_jsx/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_hydration_no_flicker" data-desc="imported skill rendering_hydration_no_flicker from vercel">
+                <h2 class="skill-name">rendering_hydration_no_flicker</h2>
+                <p class="skill-desc">Imported skill rendering_hydration_no_flicker from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_hydration_no_flicker/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rendering_svg_precision" data-desc="imported skill rendering_svg_precision from vercel">
+                <h2 class="skill-name">rendering_svg_precision</h2>
+                <p class="skill-desc">Imported skill rendering_svg_precision from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rendering_svg_precision/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="replace" data-desc="imported skill replace from anthropic">
+                <h2 class="skill-name">replace</h2>
+                <p class="skill-desc">Imported skill replace from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/replace/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="requirements" data-desc="imported skill requirements from anthropic">
+                <h2 class="skill-name">requirements</h2>
+                <p class="skill-desc">Imported skill requirements from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/requirements/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_defer_reads" data-desc="imported skill rerender_defer_reads from vercel">
+                <h2 class="skill-name">rerender_defer_reads</h2>
+                <p class="skill-desc">Imported skill rerender_defer_reads from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_defer_reads/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_dependencies" data-desc="imported skill rerender_dependencies from vercel">
+                <h2 class="skill-name">rerender_dependencies</h2>
+                <p class="skill-desc">Imported skill rerender_dependencies from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_dependencies/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_derived_state" data-desc="imported skill rerender_derived_state from vercel">
+                <h2 class="skill-name">rerender_derived_state</h2>
+                <p class="skill-desc">Imported skill rerender_derived_state from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_derived_state/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_functional_setstate" data-desc="imported skill rerender_functional_setstate from vercel">
+                <h2 class="skill-name">rerender_functional_setstate</h2>
+                <p class="skill-desc">Imported skill rerender_functional_setstate from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_functional_setstate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_lazy_state_init" data-desc="imported skill rerender_lazy_state_init from vercel">
+                <h2 class="skill-name">rerender_lazy_state_init</h2>
+                <p class="skill-desc">Imported skill rerender_lazy_state_init from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_lazy_state_init/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_memo" data-desc="imported skill rerender_memo from vercel">
+                <h2 class="skill-name">rerender_memo</h2>
+                <p class="skill-desc">Imported skill rerender_memo from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_memo/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="rerender_transitions" data-desc="imported skill rerender_transitions from vercel">
+                <h2 class="skill-name">rerender_transitions</h2>
+                <p class="skill-desc">Imported skill rerender_transitions from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/rerender_transitions/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="research_summary_format" data-desc="imported skill research_summary_format from openai">
+                <h2 class="skill-name">research_summary_format</h2>
+                <p class="skill-desc">Imported skill research_summary_format from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/research_summary_format/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="research_summary_template" data-desc="imported skill research_summary_template from openai">
+                <h2 class="skill-name">research_summary_template</h2>
+                <p class="skill-desc">Imported skill research_summary_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/research_summary_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="research_to_database" data-desc="imported skill research_to_database from openai">
+                <h2 class="skill-name">research_to_database</h2>
+                <p class="skill-desc">Imported skill research_to_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/research_to_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="retrospective_template" data-desc="imported skill retrospective_template from openai">
+                <h2 class="skill-name">retrospective_template</h2>
+                <p class="skill-desc">Imported skill retrospective_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/retrospective_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="runloop" data-desc="imported skill runloop from langchain">
+                <h2 class="skill-name">runloop</h2>
+                <p class="skill-desc">Imported skill runloop from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/runloop/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="sandbox" data-desc="imported skill sandbox from langchain">
+                <h2 class="skill-name">sandbox</h2>
+                <p class="skill-desc">Imported skill sandbox from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/sandbox/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="sandbox_factory" data-desc="imported skill sandbox_factory from langchain">
+                <h2 class="skill-name">sandbox_factory</h2>
+                <p class="skill-desc">Imported skill sandbox_factory from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/sandbox_factory/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="server" data-desc="imported skill server from langchain">
+                <h2 class="skill-name">server</h2>
+                <p class="skill-desc">Imported skill server from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/server/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="server_after_nonblocking" data-desc="imported skill server_after_nonblocking from vercel">
+                <h2 class="skill-name">server_after_nonblocking</h2>
+                <p class="skill-desc">Imported skill server_after_nonblocking from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/server_after_nonblocking/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="server_cache_lru" data-desc="imported skill server_cache_lru from vercel">
+                <h2 class="skill-name">server_cache_lru</h2>
+                <p class="skill-desc">Imported skill server_cache_lru from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/server_cache_lru/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="server_cache_react" data-desc="imported skill server_cache_react from vercel">
+                <h2 class="skill-name">server_cache_react</h2>
+                <p class="skill-desc">Imported skill server_cache_react from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/server_cache_react/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="server_parallel_fetching" data-desc="imported skill server_parallel_fetching from vercel">
+                <h2 class="skill-name">server_parallel_fetching</h2>
+                <p class="skill-desc">Imported skill server_parallel_fetching from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/server_parallel_fetching/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="server_serialization" data-desc="imported skill server_serialization from vercel">
+                <h2 class="skill-name">server_serialization</h2>
+                <p class="skill-desc">Imported skill server_serialization from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/server_serialization/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="sessions" data-desc="imported skill sessions from langchain">
+                <h2 class="skill-name">sessions</h2>
+                <p class="skill-desc">Imported skill sessions from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/sessions/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="settings" data-desc="imported skill settings from agentskills">
+                <h2 class="skill-name">settings</h2>
+                <p class="skill-desc">Imported skill settings from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/settings/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="shell" data-desc="imported skill shell from langchain">
+                <h2 class="skill-name">shell</h2>
+                <p class="skill-desc">Imported skill shell from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/shell/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="silkscreen_ofl" data-desc="imported skill silkscreen_ofl from anthropic">
+                <h2 class="skill-name">silkscreen_ofl</h2>
+                <p class="skill-desc">Imported skill silkscreen_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/silkscreen_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="skill" data-desc="imported skill skill from openai">
+                <h2 class="skill-name">skill</h2>
+                <p class="skill-desc">Imported skill skill from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="skill" data-desc="imported skill skill from langchain">
+                <h2 class="skill-name">skill</h2>
+                <p class="skill-desc">Imported skill skill from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="skill" data-desc="imported skill skill from vercel">
+                <h2 class="skill-name">skill</h2>
+                <p class="skill-desc">Imported skill skill from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="skill" data-desc="imported skill skill from anthropic">
+                <h2 class="skill-name">skill</h2>
+                <p class="skill-desc">Imported skill skill from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/skill/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="skills" data-desc="imported skill skills from langchain">
+                <h2 class="skill-name">skills</h2>
+                <p class="skill-desc">Imported skill skills from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/skills/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="smoochsans_ofl" data-desc="imported skill smoochsans_ofl from anthropic">
+                <h2 class="skill-name">smoochsans_ofl</h2>
+                <p class="skill-desc">Imported skill smoochsans_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/smoochsans_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="spec_parsing" data-desc="imported skill spec_parsing from openai">
+                <h2 class="skill-name">spec_parsing</h2>
+                <p class="skill-desc">Imported skill spec_parsing from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/spec_parsing/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="spec_to_tasks" data-desc="imported skill spec_to_tasks from openai">
+                <h2 class="skill-name">spec_to_tasks</h2>
+                <p class="skill-desc">Imported skill spec_to_tasks from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/spec_to_tasks/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="sprint_planning" data-desc="imported skill sprint_planning from openai">
+                <h2 class="skill-name">sprint_planning</h2>
+                <p class="skill-desc">Imported skill sprint_planning from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/sprint_planning/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="sprint_planning_template" data-desc="imported skill sprint_planning_template from openai">
+                <h2 class="skill-name">sprint_planning_template</h2>
+                <p class="skill-desc">Imported skill sprint_planning_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/sprint_planning_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="standard_implementation_plan" data-desc="imported skill standard_implementation_plan from openai">
+                <h2 class="skill-name">standard_implementation_plan</h2>
+                <p class="skill-desc">Imported skill standard_implementation_plan from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/standard_implementation_plan/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="state" data-desc="imported skill state from langchain">
+                <h2 class="skill-name">state</h2>
+                <p class="skill-desc">Imported skill state from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/state/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="status" data-desc="imported skill status from langchain">
+                <h2 class="skill-name">status</h2>
+                <p class="skill-desc">Imported skill status from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/status/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="status_meeting_prep" data-desc="imported skill status_meeting_prep from openai">
+                <h2 class="skill-name">status_meeting_prep</h2>
+                <p class="skill-desc">Imported skill status_meeting_prep from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/status_meeting_prep/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="status_update_template" data-desc="imported skill status_update_template from openai">
+                <h2 class="skill-name">status_update_template</h2>
+                <p class="skill-desc">Imported skill status_update_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/status_update_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="store" data-desc="imported skill store from langchain">
+                <h2 class="skill-name">store</h2>
+                <p class="skill-desc">Imported skill store from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/store/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="subagents" data-desc="imported skill subagents from langchain">
+                <h2 class="skill-name">subagents</h2>
+                <p class="skill-desc">Imported skill subagents from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/subagents/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="summarization" data-desc="imported skill summarization from langchain">
+                <h2 class="skill-name">summarization</h2>
+                <p class="skill-desc">Imported skill summarization from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/summarization/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="sunset_boulevard" data-desc="imported skill sunset_boulevard from anthropic">
+                <h2 class="skill-name">sunset_boulevard</h2>
+                <p class="skill-desc">Imported skill sunset_boulevard from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/sunset_boulevard/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="task_creation" data-desc="imported skill task_creation from openai">
+                <h2 class="skill-name">task_creation</h2>
+                <p class="skill-desc">Imported skill task_creation from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/task_creation/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="task_creation_template" data-desc="imported skill task_creation_template from openai">
+                <h2 class="skill-name">task_creation_template</h2>
+                <p class="skill-desc">Imported skill task_creation_template from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/task_creation_template/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="team_wiki_database" data-desc="imported skill team_wiki_database from openai">
+                <h2 class="skill-name">team_wiki_database</h2>
+                <p class="skill-desc">Imported skill team_wiki_database from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/team_wiki_database/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tech_innovation" data-desc="imported skill tech_innovation from anthropic">
+                <h2 class="skill-name">tech_innovation</h2>
+                <p class="skill-desc">Imported skill tech_innovation from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/tech_innovation/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="technical_investigation" data-desc="imported skill technical_investigation from openai">
+                <h2 class="skill-name">technical_investigation</h2>
+                <p class="skill-desc">Imported skill technical_investigation from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/technical_investigation/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tektur_ofl" data-desc="imported skill tektur_ofl from anthropic">
+                <h2 class="skill-name">tektur_ofl</h2>
+                <p class="skill-desc">Imported skill tektur_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/tektur_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="template_selection_guide" data-desc="imported skill template_selection_guide from openai">
+                <h2 class="skill-name">template_selection_guide</h2>
+                <p class="skill-desc">Imported skill template_selection_guide from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/template_selection_guide/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="textual_adapter" data-desc="imported skill textual_adapter from langchain">
+                <h2 class="skill-name">textual_adapter</h2>
+                <p class="skill-desc">Imported skill textual_adapter from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/textual_adapter/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="third_party_notices" data-desc="imported skill third_party_notices from anthropic">
+                <h2 class="skill-name">third_party_notices</h2>
+                <p class="skill-desc">Imported skill third_party_notices from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/third_party_notices/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="thumbnail" data-desc="imported skill thumbnail from anthropic">
+                <h2 class="skill-name">thumbnail</h2>
+                <p class="skill-desc">Imported skill thumbnail from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/thumbnail/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tool_renderers" data-desc="imported skill tool_renderers from langchain">
+                <h2 class="skill-name">tool_renderers</h2>
+                <p class="skill-desc">Imported skill tool_renderers from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/tool_renderers/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tool_widgets" data-desc="imported skill tool_widgets from langchain">
+                <h2 class="skill-name">tool_widgets</h2>
+                <p class="skill-desc">Imported skill tool_widgets from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/tool_widgets/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tools" data-desc="imported skill tools from langchain">
+                <h2 class="skill-name">tools</h2>
+                <p class="skill-desc">Imported skill tools from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/tools/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tracing" data-desc="imported skill tracing from langchain">
+                <h2 class="skill-name">tracing</h2>
+                <p class="skill-desc">Imported skill tracing from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/tracing/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="trip_planning" data-desc="imported skill trip_planning from openai">
+                <h2 class="skill-name">trip_planning</h2>
+                <p class="skill-desc">Imported skill trip_planning from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/trip_planning/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="tsconfig" data-desc="imported skill tsconfig from vercel">
+                <h2 class="skill-name">tsconfig</h2>
+                <p class="skill-desc">Imported skill tsconfig from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/tsconfig/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="types" data-desc="imported skill types from vercel">
+                <h2 class="skill-name">types</h2>
+                <p class="skill-desc">Imported skill types from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/types/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ui" data-desc="imported skill ui from langchain">
+                <h2 class="skill-name">ui</h2>
+                <p class="skill-desc">Imported skill ui from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/ui/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="ui_component" data-desc="imported skill ui_component from openai">
+                <h2 class="skill-name">ui_component</h2>
+                <p class="skill-desc">Imported skill ui_component from openai</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/openai/ui_component/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="unpack" data-desc="imported skill unpack from anthropic">
+                <h2 class="skill-name">unpack</h2>
+                <p class="skill-desc">Imported skill unpack from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/unpack/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="utilities" data-desc="imported skill utilities from anthropic">
+                <h2 class="skill-name">utilities</h2>
+                <p class="skill-desc">Imported skill utilities from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/utilities/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="utils" data-desc="imported skill utils from langchain">
+                <h2 class="skill-name">utils</h2>
+                <p class="skill-desc">Imported skill utils from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/utils/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="validate" data-desc="imported skill validate from vercel">
+                <h2 class="skill-name">validate</h2>
+                <p class="skill-desc">Imported skill validate from vercel</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/vercel/validate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="validate" data-desc="imported skill validate from anthropic">
+                <h2 class="skill-name">validate</h2>
+                <p class="skill-desc">Imported skill validate from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/validate/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="validator" data-desc="imported skill validator from agentskills">
+                <h2 class="skill-name">validator</h2>
+                <p class="skill-desc">Imported skill validator from agentskills</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/agentskills/validator/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="validators" data-desc="imported skill validators from anthropic">
+                <h2 class="skill-name">validators</h2>
+                <p class="skill-desc">Imported skill validators from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/validators/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="welcome" data-desc="imported skill welcome from langchain">
+                <h2 class="skill-name">welcome</h2>
+                <p class="skill-desc">Imported skill welcome from langchain</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/langchain/welcome/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="workflows" data-desc="imported skill workflows from anthropic">
+                <h2 class="skill-name">workflows</h2>
+                <p class="skill-desc">Imported skill workflows from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/workflows/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="worksans_ofl" data-desc="imported skill worksans_ofl from anthropic">
+                <h2 class="skill-name">worksans_ofl</h2>
+                <p class="skill-desc">Imported skill worksans_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/worksans_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+
+            <div class="skill-card" data-name="youngserif_ofl" data-desc="imported skill youngserif_ofl from anthropic">
+                <h2 class="skill-name">youngserif_ofl</h2>
+                <p class="skill-desc">Imported skill youngserif_ofl from anthropic</p>
+                <div class="skill-meta">
+                    <span>v1.0.0</span>
+                    <a href="https://github.com/bitcoreos/skills.md/blob/main/sources/anthropic/youngserif_ofl/SKILL.md" target="_blank" class="source-link">View Source &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('search');
+        const cards = document.querySelectorAll('.skill-card');
+        const countDisplay = document.getElementById('count');
+
+        function updateCount() {
+            const visible = document.querySelectorAll('.skill-card:not(.hidden)').length;
+            countDisplay.textContent = `Showing ${visible} skills`;
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const desc = card.getAttribute('data-desc');
+                if (name.includes(term) || desc.includes(term)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+            updateCount();
+        });
+        
+        // Init count
+        updateCount();
+    </script>
+</body>
+</html>
+    
