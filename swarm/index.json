@@ -1,0 +1,22 @@
+[
+ {
+  "id": "anthropic.calculator",
+  "path": "sources/anthropic/calculator.js",
+  "provider": "anthropic"
+ },
+ {
+  "id": "anthropic.customer-info",
+  "path": "sources/anthropic/customer-info.js",
+  "provider": "anthropic"
+ },
+ {
+  "id": "anthropic.order-details",
+  "path": "sources/anthropic/order-details.js",
+  "provider": "anthropic"
+ },
+ {
+  "id": "bithub.file-io",
+  "path": "sources/bithub/file-io.js",
+  "provider": "bithub"
+ }
+]
