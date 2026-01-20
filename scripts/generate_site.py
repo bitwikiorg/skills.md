@@ -71,17 +71,35 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             margin-bottom: 0.75rem;
             font-family: var(--font-mono);
         }
-        .refs ul {
+        .refs-grid {
             list-style: none;
             display: grid;
-            gap: 0.4rem;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         }
-        .refs a {
+        .ref-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            background-color: rgba(22, 27, 34, 0.6);
+        }
+        .ref-card h3 {
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+            font-family: var(--font-mono);
+            color: var(--text-main);
+        }
+        .ref-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+        .ref-card a {
             color: var(--accent-blue);
             text-decoration: none;
+            font-size: 0.85rem;
         }
-        .refs a:hover {
+        .ref-card a:hover {
             text-decoration: underline;
         }
         .banner {
@@ -374,16 +392,52 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </section>
     <section class="refs">
         <h2>Official References</h2>
-        <ul>
-            <li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">https://code.claude.com/docs/en/skills</a></li>
-            <li><a href="https://github.com/anthropics/skills" target="_blank" rel="noopener">https://github.com/anthropics/skills</a></li>
-            <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener">https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview</a></li>
-            <li><a href="https://agentskills.io/home" target="_blank" rel="noopener">https://agentskills.io/home</a></li>
-            <li><a href="https://github.com/agentskills/agentskills/tree/main/skills-ref" target="_blank" rel="noopener">https://github.com/agentskills/agentskills/tree/main/skills-ref</a></li>
-            <li><a href="https://github.com/openai/skills" target="_blank" rel="noopener">https://github.com/openai/skills</a></li>
-            <li><a href="https://github.com/vercel-labs/agent-skills" target="_blank" rel="noopener">https://github.com/vercel-labs/agent-skills</a></li>
-            <li><a href="https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/libs/deepagents-cli/examples/skills" target="_blank" rel="noopener">https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/libs/deepagents-cli/examples/skills</a></li>
-            <li><a href="https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/examples/content-builder-agent/skills" target="_blank" rel="noopener">https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/examples/content-builder-agent/skills</a></li>
+        <ul class="refs-grid">
+            <li class="ref-card">
+                <h3>Claude Skills Docs</h3>
+                <p>Claude's skills reference documentation.</p>
+                <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">code.claude.com/docs/en/skills</a>
+            </li>
+            <li class="ref-card">
+                <h3>Anthropic Skills Repo</h3>
+                <p>Official Anthropic skills library.</p>
+                <a href="https://github.com/anthropics/skills" target="_blank" rel="noopener">github.com/anthropics/skills</a>
+            </li>
+            <li class="ref-card">
+                <h3>Claude Agent Skills Overview</h3>
+                <p>Agent skills overview and guidelines.</p>
+                <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener">platform.claude.com/docs/…/agent-skills/overview</a>
+            </li>
+            <li class="ref-card">
+                <h3>AgentSkills Spec</h3>
+                <p>Open format for agent skills.</p>
+                <a href="https://agentskills.io/home" target="_blank" rel="noopener">agentskills.io/home</a>
+            </li>
+            <li class="ref-card">
+                <h3>AgentSkills Reference</h3>
+                <p>Reference implementation and examples.</p>
+                <a href="https://github.com/agentskills/agentskills/tree/main/skills-ref" target="_blank" rel="noopener">github.com/agentskills/agentskills/skills-ref</a>
+            </li>
+            <li class="ref-card">
+                <h3>OpenAI Skills Repo</h3>
+                <p>OpenAI skill collections and system skills.</p>
+                <a href="https://github.com/openai/skills" target="_blank" rel="noopener">github.com/openai/skills</a>
+            </li>
+            <li class="ref-card">
+                <h3>Vercel Agent Skills</h3>
+                <p>Vercel agent skill library and rules.</p>
+                <a href="https://github.com/vercel-labs/agent-skills" target="_blank" rel="noopener">github.com/vercel-labs/agent-skills</a>
+            </li>
+            <li class="ref-card">
+                <h3>DeepAgents CLI Skills</h3>
+                <p>LangChain DeepAgents skill examples.</p>
+                <a href="https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/libs/deepagents-cli/examples/skills" target="_blank" rel="noopener">github.com/langchain-ai/deepagents/…/examples/skills</a>
+            </li>
+            <li class="ref-card">
+                <h3>DeepAgents Content Builder</h3>
+                <p>Content builder agent skills.</p>
+                <a href="https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/examples/content-builder-agent/skills" target="_blank" rel="noopener">github.com/langchain-ai/deepagents/…/content-builder-agent/skills</a>
+            </li>
         </ul>
     </section>
     <main class="grid" id="skills-grid">
@@ -657,7 +711,7 @@ def collect_skills():
     skills = []
     for root, _, files in os.walk(SOURCES_DIR):
         for file in files:
-            if not (file.endswith('.js') or file.upper() == 'SKILL.MD'):
+            if file.upper() != 'SKILL.MD':
                 continue
             path = os.path.join(root, file)
             rel_path = os.path.relpath(path, REPO_DIR)
