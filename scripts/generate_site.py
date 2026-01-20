@@ -58,6 +58,31 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             max-width: 1200px;
             margin: 0 auto 1.5rem;
         }
+        .refs {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: rgba(13, 17, 23, 0.6);
+        }
+        .refs h2 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            font-family: var(--font-mono);
+        }
+        .refs ul {
+            list-style: none;
+            display: grid;
+            gap: 0.4rem;
+        }
+        .refs a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        .refs a:hover {
+            text-decoration: underline;
+        }
         .banner {
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -185,6 +210,25 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             font-size: 0.8rem;
             color: var(--text-muted);
         }
+        .skill-content {
+            background-color: rgba(22, 27, 34, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            white-space: pre-wrap;
+            max-height: 260px;
+            overflow: auto;
+        }
+        details summary {
+            cursor: pointer;
+            color: var(--accent-blue);
+            font-family: var(--font-mono);
+        }
+        details summary:hover {
+            text-decoration: underline;
+        }
         .source-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -198,6 +242,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             display: flex;
             gap: 0.75rem;
             align-items: center;
+            flex-wrap: wrap;
+        }
+        .link-group a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .link-group a:hover {
+            text-decoration: underline;
         }
         .hidden { display: none !important; }
         .toast {
@@ -220,13 +273,27 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <header>
         <h1>Skills Registry</h1>
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Filter skills by name, provider, license, or source..." autofocus>
+            <input type="text" id="search-input" placeholder="Filter skills by name, content, provider, license, or source..." autofocus>
         </div>
     </header>
     <div class="meta-bar">
         <div id="registry-banner" class="banner"></div>
         <div id="skills-count"></div>
     </div>
+    <section class="refs">
+        <h2>Official References</h2>
+        <ul>
+            <li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">https://code.claude.com/docs/en/skills</a></li>
+            <li><a href="https://github.com/anthropics/skills" target="_blank" rel="noopener">https://github.com/anthropics/skills</a></li>
+            <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank" rel="noopener">https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview</a></li>
+            <li><a href="https://agentskills.io/home" target="_blank" rel="noopener">https://agentskills.io/home</a></li>
+            <li><a href="https://github.com/agentskills/agentskills/tree/main/skills-ref" target="_blank" rel="noopener">https://github.com/agentskills/agentskills/tree/main/skills-ref</a></li>
+            <li><a href="https://github.com/openai/skills" target="_blank" rel="noopener">https://github.com/openai/skills</a></li>
+            <li><a href="https://github.com/vercel-labs/agent-skills" target="_blank" rel="noopener">https://github.com/vercel-labs/agent-skills</a></li>
+            <li><a href="https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/libs/deepagents-cli/examples/skills" target="_blank" rel="noopener">https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/libs/deepagents-cli/examples/skills</a></li>
+            <li><a href="https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/examples/content-builder-agent/skills" target="_blank" rel="noopener">https://github.com/langchain-ai/deepagents/tree/f878123eebf245dc609dea49a6a95714153f9b65/examples/content-builder-agent/skills</a></li>
+        </ul>
+    </section>
     <main class="grid" id="skills-grid">
         __SKILLS_CONTENT__
     </main>
@@ -240,7 +307,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             searchInput.addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase();
                 cards.forEach(card => {
-                    const haystack = card.dataset.search.toLowerCase();
+                    const content = card.querySelector('.skill-content');
+                    const haystack = (card.dataset.search + ' ' + (content ? content.textContent : '')).toLowerCase();
                     if (haystack.includes(term)) {
                         card.classList.remove('hidden');
                     } else {
@@ -261,6 +329,25 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => { showToast(); });
         }
+        function copySkill(button) {
+            const card = button.closest('.card');
+            const content = card.querySelector('.skill-content');
+            if (content) {
+                navigator.clipboard.writeText(content.textContent).then(() => { showToast(); });
+            }
+        }
+        function hydrateLinks() {
+            const host = window.location.host;
+            let repoBase = 'https://github.com/bitcoreos/skills.md';
+            if (host.includes('bitwikiorg.github.io')) {
+                repoBase = 'https://github.com/bitwikiorg/skills.md';
+            }
+            document.querySelectorAll('[data-path]').forEach(link => {
+                const path = link.getAttribute('data-path');
+                link.setAttribute('href', `${repoBase}/blob/main/${path}`);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', hydrateLinks);
         function showToast() {
             const toast = document.getElementById('toast');
             toast.classList.add('show');
@@ -306,6 +393,81 @@ def parse_frontmatter(content):
                 in_block = False
     return data, body
 
+PROVIDER_INFO = {
+    "openai": {
+        "repo": "https://github.com/openai/skills",
+        "license_mode": "per-skill",
+        "license_label": "LICENSE.txt",
+    },
+    "anthropic": {
+        "repo": "https://github.com/anthropics/skills",
+        "license_mode": "per-skill",
+        "license_label": "LICENSE.txt",
+    },
+    "vercel": {
+        "repo": "https://github.com/vercel-labs/agent-skills",
+        "license_url": "https://github.com/vercel-labs/agent-skills",
+        "license_label": "See repository",
+    },
+    "agentskills": {
+        "repo": "https://github.com/agentskills/agentskills",
+        "license_url": "https://github.com/agentskills/agentskills/blob/main/skills-ref/LICENSE",
+        "license_label": "skills-ref/LICENSE",
+    },
+    "langchain": {
+        "repo": "https://github.com/langchain-ai/deepagents",
+        "license_url": "https://github.com/langchain-ai/deepagents/blob/main/LICENSE",
+        "license_label": "LICENSE",
+    },
+    "bithub": {
+        "repo": "https://github.com/bitwikiorg/skills.md",
+        "license_url": "https://github.com/bitwikiorg/skills.md",
+        "license_label": "See repository",
+    },
+}
+
+def extract_upstream_path(origin, marker, base_url):
+    if not origin or marker not in origin:
+        return None
+    tail = origin.split(marker, 1)[1].lstrip('/')
+    return f"{base_url}/{tail}"
+
+def derive_license_url(origin, provider):
+    info = PROVIDER_INFO.get(provider, {})
+    if info.get("license_mode") != "per-skill":
+        return info.get("license_url")
+    if provider == "openai" and "/openai/skills/" in origin:
+        tail = origin.split("/openai/skills/", 1)[1].lstrip("/")
+        parts = tail.split("/")
+        if len(parts) >= 2 and parts[0].startswith("."):
+            skill_dir = f"{parts[0]}/{parts[1]}"
+        else:
+            skill_dir = parts[0] if parts else ""
+        if skill_dir:
+            return f"https://github.com/openai/skills/blob/main/skills/{skill_dir}/LICENSE.txt"
+    if provider == "anthropic" and "/anthropic/skills/" in origin:
+        tail = origin.split("/anthropic/skills/", 1)[1].lstrip("/")
+        parts = tail.split("/")
+        skill_dir = parts[0] if parts else ""
+        if skill_dir:
+            return f"https://github.com/anthropics/skills/blob/main/skills/{skill_dir}/LICENSE.txt"
+    return info.get("license_url")
+
+def derive_upstream_url(origin, provider):
+    if not origin:
+        return None
+    if origin.startswith("http://") or origin.startswith("https://"):
+        return origin
+    if "/openai/skills/" in origin:
+        return extract_upstream_path(origin, "/openai/skills/", "https://github.com/openai/skills/blob/main/skills")
+    if "/anthropic/skills/" in origin:
+        return extract_upstream_path(origin, "/anthropic/skills/", "https://github.com/anthropics/skills/blob/main/skills")
+    if "/agentskills/skills-ref/" in origin:
+        return extract_upstream_path(origin, "/agentskills/skills-ref/", "https://github.com/agentskills/agentskills/blob/main/skills-ref")
+    if "/deepagents/" in origin:
+        return extract_upstream_path(origin, "/deepagents/", "https://github.com/langchain-ai/deepagents/blob/main")
+    return None
+
 def extract_snippet(text):
     cleaned = []
     in_code = False
@@ -338,15 +500,26 @@ def collect_skills():
             description = frontmatter.get('description') or extract_snippet(body) or "No description provided."
             origin = frontmatter.get('origin') or frontmatter.get('source') or "Unknown"
             version = frontmatter.get('version') or "Unknown"
-            license_id = frontmatter.get('spdx-id') or frontmatter.get('spdx_id') or "Unknown"
+            license_id = frontmatter.get('spdx-id') or frontmatter.get('spdx_id') or frontmatter.get('license') or "Unknown"
             skill_type = 'SKILL.md' if file.upper() == 'SKILL.MD' else 'js'
+            upstream_url = derive_upstream_url(origin, provider)
+            license_url = None
+            license_label = None
+            if license_id != "Unknown":
+                license_label = license_id
+                if re.match(r"^[A-Za-z0-9\.\-+]+$", license_id):
+                    license_url = f"https://spdx.org/licenses/{license_id}.html"
+            if not license_label:
+                license_url = derive_license_url(origin, provider)
+                provider_info = PROVIDER_INFO.get(provider, {})
+                license_label = provider_info.get("license_label", "See source")
             search_blob = " ".join([
                 skill_id,
                 description,
                 provider,
                 origin,
                 version,
-                license_id,
+                license_label,
                 rel_path,
                 skill_type,
             ])
@@ -355,10 +528,13 @@ def collect_skills():
                 'description': description,
                 'provider': provider,
                 'origin': origin,
+                'upstream_url': upstream_url or "",
                 'version': version,
-                'license': license_id,
+                'license': license_label,
+                'license_url': license_url or "",
                 'path': rel_path,
                 'type': skill_type,
+                'content': body.strip() or "No content available.",
                 'search': search_blob,
             })
     skills.sort(key=lambda s: (s['provider'].lower(), s['id'].lower()))
@@ -369,11 +545,14 @@ def generate_html(skills):
     for skill in skills:
         display_id = html.escape(str(skill['id']), quote=True)
         safe_desc = html.escape(str(skill['description']), quote=True)
-        safe_origin = html.escape(str(skill['origin']), quote=True)
         safe_path = html.escape(str(skill['path']), quote=True)
         safe_search = html.escape(re.sub(r'\s+', ' ', str(skill['search'])), quote=True)
+        safe_content = html.escape(str(skill['content']), quote=True)
         id_js = str(skill['id']).replace('\\', '\\\\').replace("'", "\\'")
-        safe_path_js = str(skill['path']).replace('\\', '\\\\').replace("'", "\\'")
+        upstream_url = html.escape(str(skill['upstream_url']), quote=True)
+        license_url = html.escape(str(skill['license_url']), quote=True)
+        provider_info = PROVIDER_INFO.get(skill['provider'], {})
+        provider_repo = html.escape(str(provider_info.get('repo', '')), quote=True)
         card = f"""
         <article class="card" data-search="{safe_search}">
             <div class="card-header">
@@ -389,11 +568,17 @@ def generate_html(skills):
                 <span class="badge muted">Version: {html.escape(str(skill['version']))}</span>
             </div>
             <div class="card-body">{safe_desc}</div>
+            <details>
+                <summary>View skill</summary>
+                <pre class="skill-content">{safe_content}</pre>
+            </details>
             <div class="card-footer">
-                <span class="badge muted">Origin: {safe_origin}</span>
                 <div class="link-group">
-                    <a href="{safe_path}" class="source-link">View File</a>
-                    <button class="copy-btn" onclick="copyToClipboard('{safe_path_js}')" title="Copy Path">
+                    <a data-path="{safe_path}" class="source-link">Registry File</a>
+                    {f'<a href="{upstream_url}" class="source-link" target="_blank" rel="noopener">Upstream File</a>' if upstream_url else ''}
+                    {f'<a href="{provider_repo}" class="source-link" target="_blank" rel="noopener">Provider Repo</a>' if (not upstream_url and provider_repo) else ''}
+                    {f'<a href="{license_url}" class="source-link" target="_blank" rel="noopener">License: {html.escape(str(skill["license"]), quote=True)}</a>' if license_url else f'<span class="badge muted">License: {html.escape(str(skill["license"]), quote=True)}</span>'}
+                    <button class="copy-btn" onclick="copySkill(this)" title="Copy Skill Content">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     </button>
                 </div>
