@@ -75,6 +75,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             list-style: none;
             display: grid;
             gap: 0.4rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         }
         .refs a {
             color: var(--accent-blue);
@@ -95,6 +96,49 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         }
         .banner a:hover {
             text-decoration: underline;
+        }
+        .filters {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: rgba(13, 17, 23, 0.6);
+            display: grid;
+            gap: 1rem;
+        }
+        .filters h2 {
+            font-size: 1rem;
+            font-family: var(--font-mono);
+        }
+        .filter-grid {
+            display: grid;
+            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        .filter-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+        }
+        .filter-group select,
+        .filter-group button {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        .filter-group button {
+            cursor: pointer;
+            background-color: rgba(88, 166, 255, 0.12);
+        }
+        .filter-group button:hover {
+            border-color: var(--accent-blue);
         }
         .search-container { flex-grow: 1; max-width: 400px; }
         #search-input {
@@ -252,6 +296,21 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .link-group a:hover {
             text-decoration: underline;
         }
+        .copy-skill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            background-color: rgba(88, 166, 255, 0.08);
+        }
+        .copy-skill:hover {
+            border-color: var(--accent-blue);
+        }
         .hidden { display: none !important; }
         .toast {
             position: fixed;
@@ -280,6 +339,39 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <div id="registry-banner" class="banner"></div>
         <div id="skills-count"></div>
     </div>
+    <section class="filters">
+        <h2>Filters</h2>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label for="filter-provider">Provider</label>
+                <select id="filter-provider">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-license">License</label>
+                <select id="filter-license">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-type">Type</label>
+                <select id="filter-type">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filter-collection">Collection</label>
+                <select id="filter-collection">
+                    <option value="">All</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button id="filter-reset" type="button">Clear Filters</button>
+            </div>
+        </div>
+    </section>
     <section class="refs">
         <h2>Official References</h2>
         <ul>
@@ -301,21 +393,77 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('search-input');
-            const cards = document.querySelectorAll('.card');
+            const cards = Array.from(document.querySelectorAll('.card'));
             const count = document.getElementById('skills-count');
-            count.textContent = `${cards.length} skills indexed`;
-            searchInput.addEventListener('input', (e) => {
-                const term = e.target.value.toLowerCase();
+            const providerSelect = document.getElementById('filter-provider');
+            const licenseSelect = document.getElementById('filter-license');
+            const typeSelect = document.getElementById('filter-type');
+            const collectionSelect = document.getElementById('filter-collection');
+            const resetButton = document.getElementById('filter-reset');
+
+            const total = cards.length;
+            const updateCount = () => {
+                const visible = cards.filter(card => !card.classList.contains('hidden')).length;
+                count.textContent = `${visible} / ${total} skills`;
+            };
+
+            const populateSelect = (select, key) => {
+                const values = new Set();
+                cards.forEach(card => {
+                    const value = card.dataset[key];
+                    if (value) values.add(value);
+                });
+                Array.from(values).sort((a, b) => a.localeCompare(b)).forEach(value => {
+                    const option = document.createElement('option');
+                    option.value = value;
+                    option.textContent = value;
+                    select.appendChild(option);
+                });
+            };
+
+            const applyFilters = () => {
+                const term = searchInput.value.toLowerCase();
+                const provider = providerSelect.value;
+                const license = licenseSelect.value;
+                const type = typeSelect.value;
+                const collection = collectionSelect.value;
                 cards.forEach(card => {
                     const content = card.querySelector('.skill-content');
                     const haystack = (card.dataset.search + ' ' + (content ? content.textContent : '')).toLowerCase();
-                    if (haystack.includes(term)) {
+                    const matchesSearch = !term || haystack.includes(term);
+                    const matchesProvider = !provider || card.dataset.provider === provider;
+                    const matchesLicense = !license || card.dataset.license === license;
+                    const matchesType = !type || card.dataset.type === type;
+                    const matchesCollection = !collection || card.dataset.collection === collection;
+                    if (matchesSearch && matchesProvider && matchesLicense && matchesType && matchesCollection) {
                         card.classList.remove('hidden');
                     } else {
                         card.classList.add('hidden');
                     }
                 });
+                updateCount();
+            };
+
+            populateSelect(providerSelect, 'provider');
+            populateSelect(licenseSelect, 'license');
+            populateSelect(typeSelect, 'type');
+            populateSelect(collectionSelect, 'collection');
+            updateCount();
+
+            searchInput.addEventListener('input', applyFilters);
+            providerSelect.addEventListener('change', applyFilters);
+            licenseSelect.addEventListener('change', applyFilters);
+            typeSelect.addEventListener('change', applyFilters);
+            collectionSelect.addEventListener('change', applyFilters);
+            resetButton.addEventListener('click', () => {
+                searchInput.value = '';
+                providerSelect.value = '';
+                licenseSelect.value = '';
+                typeSelect.value = '';
+                collectionSelect.value = '';
+                applyFilters();
             });
+
             const banner = document.getElementById('registry-banner');
             const host = window.location.host;
             if (host.includes('bitcoreos.github.io')) {
@@ -326,14 +474,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                 banner.textContent = 'Skills registry mirror';
             }
         });
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => { showToast(); });
-        }
         function copySkill(button) {
             const card = button.closest('.card');
             const content = card.querySelector('.skill-content');
             if (content) {
-                navigator.clipboard.writeText(content.textContent).then(() => { showToast(); });
+                navigator.clipboard.writeText(content.textContent).then(() => { showToast('Skill copied'); });
             }
         }
         function hydrateLinks() {
@@ -348,8 +493,9 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             });
         }
         document.addEventListener('DOMContentLoaded', hydrateLinks);
-        function showToast() {
+        function showToast(message) {
             const toast = document.getElementById('toast');
+            toast.textContent = message || 'Copied to clipboard!';
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
@@ -426,6 +572,8 @@ PROVIDER_INFO = {
     },
 }
 
+EXCLUDED_PROVIDERS = {"agentskills"}
+
 def extract_upstream_path(origin, marker, base_url):
     if not origin or marker not in origin:
         return None
@@ -468,6 +616,22 @@ def derive_upstream_url(origin, provider):
         return extract_upstream_path(origin, "/deepagents/", "https://github.com/langchain-ai/deepagents/blob/main")
     return None
 
+def derive_collection(origin, provider):
+    if provider == "openai" and "/openai/skills/" in origin:
+        tail = origin.split("/openai/skills/", 1)[1].lstrip("/")
+        if tail.startswith("."):
+            return tail.split("/", 1)[0]
+        return "skills"
+    if provider == "anthropic":
+        return "skills"
+    if provider == "vercel":
+        return "agent-skills"
+    if provider == "langchain":
+        return "deepagents"
+    if provider == "bithub":
+        return "local"
+    return "misc"
+
 def extract_snippet(text):
     cleaned = []
     in_code = False
@@ -483,6 +647,12 @@ def extract_snippet(text):
     snippet = ' '.join(' '.join(cleaned).split())
     return snippet[:280] + ('...' if len(snippet) > 280 else '')
 
+def has_markdown_heading(text):
+    for line in text.splitlines():
+        if line.lstrip().startswith('#'):
+            return True
+    return False
+
 def collect_skills():
     skills = []
     for root, _, files in os.walk(SOURCES_DIR):
@@ -496,6 +666,10 @@ def collect_skills():
             frontmatter, body = parse_frontmatter(content)
             parts = rel_path.split(os.sep)
             provider = parts[1] if len(parts) > 1 else "Unknown"
+            if provider in EXCLUDED_PROVIDERS:
+                continue
+            if file.upper() == 'SKILL.MD' and not has_markdown_heading(body):
+                continue
             skill_id = frontmatter.get('id') or frontmatter.get('name') or os.path.splitext(file)[0]
             description = frontmatter.get('description') or extract_snippet(body) or "No description provided."
             origin = frontmatter.get('origin') or frontmatter.get('source') or "Unknown"
@@ -522,6 +696,7 @@ def collect_skills():
                 license_label,
                 rel_path,
                 skill_type,
+                derive_collection(origin, provider),
             ])
             skills.append({
                 'id': skill_id,
@@ -534,6 +709,7 @@ def collect_skills():
                 'license_url': license_url or "",
                 'path': rel_path,
                 'type': skill_type,
+                'collection': derive_collection(origin, provider),
                 'content': body.strip() or "No content available.",
                 'search': search_blob,
             })
@@ -548,18 +724,14 @@ def generate_html(skills):
         safe_path = html.escape(str(skill['path']), quote=True)
         safe_search = html.escape(re.sub(r'\s+', ' ', str(skill['search'])), quote=True)
         safe_content = html.escape(str(skill['content']), quote=True)
-        id_js = str(skill['id']).replace('\\', '\\\\').replace("'", "\\'")
         upstream_url = html.escape(str(skill['upstream_url']), quote=True)
         license_url = html.escape(str(skill['license_url']), quote=True)
         provider_info = PROVIDER_INFO.get(skill['provider'], {})
         provider_repo = html.escape(str(provider_info.get('repo', '')), quote=True)
         card = f"""
-        <article class="card" data-search="{safe_search}">
+        <article class="card" data-search="{safe_search}" data-provider="{html.escape(str(skill['provider']), quote=True)}" data-license="{html.escape(str(skill['license']), quote=True)}" data-type="{html.escape(str(skill['type']), quote=True)}" data-collection="{html.escape(str(skill['collection']), quote=True)}">
             <div class="card-header">
                 <div class="skill-title">{display_id}</div>
-                <button class="copy-btn" onclick="copyToClipboard('{id_js}')" title="Copy Skill ID">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </button>
             </div>
             <div class="info-row">
                 <span class="badge">{html.escape(str(skill['provider']))}</span>
@@ -578,8 +750,9 @@ def generate_html(skills):
                     {f'<a href="{upstream_url}" class="source-link" target="_blank" rel="noopener">Upstream File</a>' if upstream_url else ''}
                     {f'<a href="{provider_repo}" class="source-link" target="_blank" rel="noopener">Provider Repo</a>' if (not upstream_url and provider_repo) else ''}
                     {f'<a href="{license_url}" class="source-link" target="_blank" rel="noopener">License: {html.escape(str(skill["license"]), quote=True)}</a>' if license_url else f'<span class="badge muted">License: {html.escape(str(skill["license"]), quote=True)}</span>'}
-                    <button class="copy-btn" onclick="copySkill(this)" title="Copy Skill Content">
+                    <button class="copy-btn copy-skill" onclick="copySkill(this)" title="Copy Skill Content">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy Skill
                     </button>
                 </div>
             </div>
