@@ -122,7 +122,9 @@ jobs:
           path: swarm
 
       - name: Build registry index
-        run: python3 scripts/generate_site.py
+        run: |
+          python3 scripts/compile_skills.py
+          python3 scripts/generate_site.py
 
       - name: Prepare site package
         run: |

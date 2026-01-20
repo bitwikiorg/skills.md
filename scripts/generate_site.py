@@ -6,6 +6,7 @@ import html
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT_FILE = os.path.join(REPO_DIR, 'index.html')
 SOURCES_DIR = os.path.join(REPO_DIR, 'sources')
+COMPILED_DIR = os.path.join(REPO_DIR, 'compiled')
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
@@ -707,9 +708,21 @@ def has_markdown_heading(text):
             return True
     return False
 
+def select_source_dir():
+    if not os.path.isdir(COMPILED_DIR):
+        return SOURCES_DIR
+    for root, _, files in os.walk(COMPILED_DIR):
+        for file in files:
+            if file.upper() == 'SKILL.MD':
+                return COMPILED_DIR
+    return SOURCES_DIR
+
+
 def collect_skills():
+    source_dir = select_source_dir()
+    is_compiled = source_dir == COMPILED_DIR
     skills = []
-    for root, _, files in os.walk(SOURCES_DIR):
+    for root, _, files in os.walk(source_dir):
         for file in files:
             if file.upper() != 'SKILL.MD':
                 continue
@@ -722,13 +735,20 @@ def collect_skills():
             provider = parts[1] if len(parts) > 1 else "Unknown"
             if provider in EXCLUDED_PROVIDERS:
                 continue
+            origin = frontmatter.get('origin') or frontmatter.get('source') or "Unknown"
+            origin_norm = origin.replace("\\", "/") if origin not in ("Unknown", "") else ""
+            source_ext = os.path.splitext(origin_norm)[1].lower() if origin_norm else ""
+            if source_ext and source_ext not in (".md", ".markdown"):
+                continue
+            if not is_compiled and origin_norm and not origin_norm.lower().endswith("/skill.md"):
+                continue
             if file.upper() == 'SKILL.MD' and not has_markdown_heading(body):
                 continue
             skill_id = frontmatter.get('id') or frontmatter.get('name') or os.path.splitext(file)[0]
             description = frontmatter.get('description') or extract_snippet(body) or "No description provided."
-            origin = frontmatter.get('origin') or frontmatter.get('source') or "Unknown"
             version = frontmatter.get('version') or "Unknown"
             license_id = frontmatter.get('spdx-id') or frontmatter.get('spdx_id') or frontmatter.get('license') or "Unknown"
+            registry_path = frontmatter.get('registry_path') or rel_path
             skill_type = 'SKILL.md' if file.upper() == 'SKILL.MD' else 'js'
             upstream_url = derive_upstream_url(origin, provider)
             license_url = None
@@ -761,7 +781,7 @@ def collect_skills():
                 'version': version,
                 'license': license_label,
                 'license_url': license_url or "",
-                'path': rel_path,
+                'path': registry_path,
                 'type': skill_type,
                 'collection': derive_collection(origin, provider),
                 'content': body.strip() or "No content available.",
