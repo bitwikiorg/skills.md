@@ -5,3 +5,4 @@
 # LangGraph
 .langgraph_api/
 node_modules/
+compiled/
