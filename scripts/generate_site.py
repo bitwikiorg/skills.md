@@ -1,17 +1,18 @@
 import os
 import re
+import html
 
 # Configuration
 REPO_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKILLS_FILE = os.path.join(REPO_DIR, 'skills.md')
 OUTPUT_FILE = os.path.join(REPO_DIR, 'index.html')
+SOURCES_DIR = os.path.join(REPO_DIR, 'sources')
 
 HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BitcoreOS Skills Registry</title>
+    <title>Skills Registry</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -32,7 +33,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             padding: 2rem;
         }
         header {
-            max_width: 1200px;
+            max-width: 1200px;
             margin: 0 auto 2rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 1rem;
@@ -46,6 +47,29 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             font-family: var(--font-mono);
             font-size: 1.5rem;
             color: var(--text-main);
+        }
+        .meta-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            max-width: 1200px;
+            margin: 0 auto 1.5rem;
+        }
+        .banner {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            background-color: rgba(56, 139, 253, 0.08);
+        }
+        .banner a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+        .banner a:hover {
+            text-decoration: underline;
         }
         .search-container { flex-grow: 1; max-width: 400px; }
         #search-input {
@@ -88,12 +112,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1rem;
+            gap: 0.75rem;
         }
         .skill-title {
             font-weight: 600;
             font-size: 1.1rem;
             color: var(--accent-blue);
             font-family: var(--font-mono);
+            word-break: break-word;
         }
         .copy-btn {
             background: none;
@@ -136,6 +162,29 @@ HTML_TEMPLATE = """<!DOCTYPE html>
             font-family: var(--font-mono);
             font-size: 0.75rem;
         }
+        .badge.muted {
+            background-color: rgba(139, 148, 158, 0.15);
+            color: var(--text-muted);
+            border-color: rgba(139, 148, 158, 0.4);
+        }
+        .pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background-color: rgba(35, 134, 54, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(35, 134, 54, 0.4);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+        }
+        .info-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
         .source-link {
             color: var(--text-muted);
             text-decoration: none;
@@ -144,6 +193,11 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         .source-link:hover {
             color: var(--accent-blue);
             text-decoration: underline;
+        }
+        .link-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
         }
         .hidden { display: none !important; }
         .toast {
@@ -164,11 +218,15 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
     <header>
-        <h1>BitcoreOS // Skills Registry</h1>
+        <h1>Skills Registry</h1>
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Filter skills by name or description..." autofocus>
+            <input type="text" id="search-input" placeholder="Filter skills by name, provider, license, or source..." autofocus>
         </div>
     </header>
+    <div class="meta-bar">
+        <div id="registry-banner" class="banner"></div>
+        <div id="skills-count"></div>
+    </div>
     <main class="grid" id="skills-grid">
         __SKILLS_CONTENT__
     </main>
@@ -177,18 +235,28 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('search-input');
             const cards = document.querySelectorAll('.card');
+            const count = document.getElementById('skills-count');
+            count.textContent = `${cards.length} skills indexed`;
             searchInput.addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase();
                 cards.forEach(card => {
-                    const title = card.dataset.title.toLowerCase();
-                    const desc = card.dataset.desc.toLowerCase();
-                    if (title.includes(term) || desc.includes(term)) {
+                    const haystack = card.dataset.search.toLowerCase();
+                    if (haystack.includes(term)) {
                         card.classList.remove('hidden');
                     } else {
                         card.classList.add('hidden');
                     }
                 });
             });
+            const banner = document.getElementById('registry-banner');
+            const host = window.location.host;
+            if (host.includes('bitcoreos.github.io')) {
+                banner.innerHTML = 'Dev registry: bitcoreos/skills.md. Public registry: <a href="https://bitwikiorg.github.io/skills.md/">bitwikiorg.github.io/skills.md</a>';
+            } else if (host.includes('bitwikiorg.github.io')) {
+                banner.innerHTML = 'Public registry: bitwikiorg/skills.md. Dev registry: <a href="https://bitcoreos.github.io/skills.md/">bitcoreos.github.io/skills.md</a>';
+            } else {
+                banner.textContent = 'Skills registry mirror';
+            }
         });
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => { showToast(); });
@@ -202,47 +270,133 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </body>
 </html>"""
 
-def parse_skills(file_path):
-    skills = []
-    if not os.path.exists(file_path):
-        return skills
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
-    # Split by H2 headers
-    sections = re.split(r'^##\s+', content, flags=re.MULTILINE)
-    for section in sections:
-        if not section.strip(): continue
-        lines = section.strip().splitlines()
-        title = lines[0].strip()
-        body_lines = []
-        provider = "Unknown"
-        for line in lines[1:]:
-            if line.strip().startswith('- Provider:') or line.strip().startswith('* Provider:'):
-                provider = line.split(':', 1)[1].strip()
+def parse_frontmatter(content):
+    lines = content.splitlines()
+    if not lines or lines[0].strip() != '---':
+        return {}, content
+    fm_lines = []
+    i = 1
+    while i < len(lines):
+        if lines[i].strip() == '---':
+            i += 1
+            break
+        fm_lines.append(lines[i])
+        i += 1
+    body = '\n'.join(lines[i:]) if i < len(lines) else ''
+    data = {}
+    current_key = None
+    in_block = False
+    for line in fm_lines:
+        if not line.strip():
+            continue
+        if in_block and (line.startswith(' ') or line.startswith('\t')):
+            data[current_key] += '\n' + line.strip()
+            continue
+        match = re.match(r'^([A-Za-z0-9_-]+)\s*:\s*(.*)$', line)
+        if match:
+            key = match.group(1)
+            value = match.group(2).strip()
+            if value in ('|', '>'):
+                data[key] = ''
+                current_key = key
+                in_block = True
             else:
-                body_lines.append(line)
-        description = '\n'.join(body_lines).strip() or "No description provided."
-        skills.append({'title': title, 'description': description, 'provider': provider})
+                data[key] = value
+                current_key = key
+                in_block = False
+    return data, body
+
+def extract_snippet(text):
+    cleaned = []
+    in_code = False
+    for line in text.splitlines():
+        if line.strip().startswith('```'):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if line.strip().startswith('#'):
+            continue
+        cleaned.append(line)
+    snippet = ' '.join(' '.join(cleaned).split())
+    return snippet[:280] + ('...' if len(snippet) > 280 else '')
+
+def collect_skills():
+    skills = []
+    for root, _, files in os.walk(SOURCES_DIR):
+        for file in files:
+            if not (file.endswith('.js') or file.upper() == 'SKILL.MD'):
+                continue
+            path = os.path.join(root, file)
+            rel_path = os.path.relpath(path, REPO_DIR)
+            with open(path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            frontmatter, body = parse_frontmatter(content)
+            parts = rel_path.split(os.sep)
+            provider = parts[1] if len(parts) > 1 else "Unknown"
+            skill_id = frontmatter.get('id') or frontmatter.get('name') or os.path.splitext(file)[0]
+            description = frontmatter.get('description') or extract_snippet(body) or "No description provided."
+            origin = frontmatter.get('origin') or frontmatter.get('source') or "Unknown"
+            version = frontmatter.get('version') or "Unknown"
+            license_id = frontmatter.get('spdx-id') or frontmatter.get('spdx_id') or "Unknown"
+            skill_type = 'SKILL.md' if file.upper() == 'SKILL.MD' else 'js'
+            search_blob = " ".join([
+                skill_id,
+                description,
+                provider,
+                origin,
+                version,
+                license_id,
+                rel_path,
+                skill_type,
+            ])
+            skills.append({
+                'id': skill_id,
+                'description': description,
+                'provider': provider,
+                'origin': origin,
+                'version': version,
+                'license': license_id,
+                'path': rel_path,
+                'type': skill_type,
+                'search': search_blob,
+            })
+    skills.sort(key=lambda s: (s['provider'].lower(), s['id'].lower()))
     return skills
 
 def generate_html(skills):
     skills_html = ""
     for skill in skills:
-        safe_title = skill['title'].replace('"', '&quot;')
-        safe_desc = skill['description'].replace('"', '&quot;')
+        display_id = html.escape(str(skill['id']), quote=True)
+        safe_desc = html.escape(str(skill['description']), quote=True)
+        safe_origin = html.escape(str(skill['origin']), quote=True)
+        safe_path = html.escape(str(skill['path']), quote=True)
+        safe_search = html.escape(re.sub(r'\s+', ' ', str(skill['search'])), quote=True)
+        id_js = str(skill['id']).replace('\\', '\\\\').replace("'", "\\'")
+        safe_path_js = str(skill['path']).replace('\\', '\\\\').replace("'", "\\'")
         card = f"""
-        <article class="card" data-title="{safe_title}" data-desc="{safe_desc}">
+        <article class="card" data-search="{safe_search}">
             <div class="card-header">
-                <div class="skill-title">{skill['title']}</div>
-                <button class="copy-btn" onclick="copyToClipboard('{safe_title}')" title="Copy Skill Name">
+                <div class="skill-title">{display_id}</div>
+                <button class="copy-btn" onclick="copyToClipboard('{id_js}')" title="Copy Skill ID">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </button>
             </div>
-            <div class="card-body">{skill['description']}</div>
+            <div class="info-row">
+                <span class="badge">{html.escape(str(skill['provider']))}</span>
+                <span class="pill">{html.escape(str(skill['type']))}</span>
+                <span class="badge muted">License: {html.escape(str(skill['license']))}</span>
+                <span class="badge muted">Version: {html.escape(str(skill['version']))}</span>
+            </div>
+            <div class="card-body">{safe_desc}</div>
             <div class="card-footer">
-                <span class="badge">{skill['provider']}</span>
-                <a href="skills.md" class="source-link">View Source</a>
+                <span class="badge muted">Origin: {safe_origin}</span>
+                <div class="link-group">
+                    <a href="{safe_path}" class="source-link">View File</a>
+                    <button class="copy-btn" onclick="copyToClipboard('{safe_path_js}')" title="Copy Path">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                </div>
             </div>
         </article>
         """
@@ -250,7 +404,7 @@ def generate_html(skills):
     return HTML_TEMPLATE.replace('__SKILLS_CONTENT__', skills_html)
 
 if __name__ == "__main__":
-    skills = parse_skills(SKILLS_FILE)
+    skills = collect_skills()
     html = generate_html(skills)
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(html)

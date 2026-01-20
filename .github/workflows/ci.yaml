@@ -108,28 +108,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      # Download Artifacts into site/swarm/
+      # Download Artifacts into swarm/
       - name: Download Index
         uses: actions/download-artifact@v4
         with:
           name: swarm-index
-          path: site/swarm
+          path: swarm
       
       - name: Download Embeddings
         uses: actions/download-artifact@v4
         with:
           name: embeddings
-          path: site/swarm
+          path: swarm
+
+      - name: Build registry index
+        run: python3 scripts/generate_site.py
+
+      - name: Prepare site package
+        run: |
+          mkdir -p site
+          cp index.html site/
+          cp .nojekyll site/
+          cp -r sources site/
+          cp -r swarm site/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./site
-          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
